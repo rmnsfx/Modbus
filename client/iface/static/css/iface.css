@@ -1,0 +1,295 @@
+body {
+    margin: 0; /* Убираем отступы */
+}
+
+.page-header {
+	font-family: arial;
+    font-weight: 900;
+	font-size: 40;
+	background-color: #008b95;    
+    padding: 20px;	
+	color: white;
+	
+}
+
+.page-center {
+    background-color: #ffffff;
+	text-align: center;
+    margin-top: 0;
+    padding: 10px 10px 10px 10px;
+}
+
+
+.text {
+		
+	font-family: arial;	
+	font-size: 50;
+	text-align: left;
+    margin: 30px 120px;
+}	
+
+.text_mini {
+		
+	font-family: arial;	
+	font-size: 15;
+	color: #333333;
+	text-align: left;
+    margin: 30px 0px 0px 0px;
+}	
+	
+ul {
+    font-family: arial;	
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #19c0cc;
+}
+
+li {
+    float: left;		
+}
+
+li a {
+    display: block;
+    color: white;	
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+	font-size: 20;
+ 
+}
+
+.active_menu {
+    display: block;
+    color: white;
+	font-weight: 900;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+	font-size: 20;
+ 
+}
+
+li a:hover {
+    background-color: #008b95;
+}
+
+p {
+	margin: 20px;
+}
+
+.errorlist{
+	
+	margin: 20px;
+	font-family: arial;		
+	background-color: #ffffff;
+	list-style: none;
+}	
+
+
+
+
+/* Базовый контейнер табов */
+.tabs {
+	min-width: auto;
+	max-width: auto;
+	padding: 20px;
+	margin: 0px;
+}
+/* Стили секций с содержанием */
+.tabs > section {
+	display: none;
+	padding: 15px;
+	background: #fff;
+	border: 1px solid #ddd;
+}
+
+.tabs > section > p {
+	margin: 0 0 5px;
+	line-height: 1.5;
+	color: #383838;
+	/* прикрутим анимацию */
+	-webkit-animation-duration: 1s;
+	animation-duration: 1s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+	-webkit-animation-name: fadeIn;
+	animation-name: fadeIn;
+}
+/* Описываем анимацию свойства opacity */
+@-webkit-keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Прячем чекбоксы */
+.tabs > input {
+	display: none;
+	position: absolute;
+}
+/* Стили переключателей вкладок (табов) */
+.tabs > label {
+	font-family: arial;	
+	font-size: 15;
+	display: inline-block;
+	margin: 0 0 -1px;
+	padding: 15px 25px;
+	font-weight: 500;
+	text-align: center;
+	color: #333333;
+	border: 0px solid #ddd;
+	border-width: 1px 1px 1px 1px;
+	background: #f1f1f1;
+	border-radius: 3px 3px 0 0;
+}
+
+/* Изменения стиля переключателей вкладок при наведении */
+.tabs > label:hover {
+	color: #888;
+	cursor: pointer;
+}
+/* Стили для активной вкладки */
+.tabs > input:checked + label {
+	color: #555;
+	border-top: 1px solid #008b95;
+	border-bottom: 1px solid #fff;
+	background: #fff;
+}
+/* Активация секций с помощью псевдокласса :checked */
+#tab1:checked ~ #content-tab1,
+#tab2:checked ~ #content-tab2,
+#tab3:checked ~ #content-tab3,
+#tab4:checked ~ #content-tab4,
+#tab5:checked ~ #content-tab5 {
+	display: block;
+}
+
+
+
+/* Кнопка */
+
+a.flat {
+	text-decoration:none;
+	padding: 10px 20px; 
+	margin-top: 20px;
+	font: normal 15px arial; 
+	#text-transform: uppercase; 
+	border: none;
+	color: #fff; 
+	background-color: #008b95; 
+	-webkit-transition:border .25s linear, color .25s linear,background-color .25s linear;
+	transition:border .25s linear, color .25s linear,background-color .25s linear;
+	-webkit-font-smoothing: subpixel-antialiased;
+	text-align: center; 
+	cursor: pointer;
+	-webkit-user-select: none;
+	display: inline-block;
+	}
+	
+a.flat:hover {
+	color: #fff; 
+	background-color: #19c0cc; 
+	border: none;
+	}
+	
+a.flat:active {
+	color: #fff; 
+	background-color: #008b95; 
+	border: none;
+	}	
+	
+input.flat[type=submit] {
+	text-decoration:none;
+	padding: 10px 20px; 
+	margin-top: 20px;
+	font: normal 15px arial; 
+	#text-transform: uppercase; 
+	border: none;
+	color: #fff; 
+	background-color: #008b95; 
+	-webkit-transition:border .25s linear, color .25s linear,background-color .25s linear;
+	transition:border .25s linear, color .25s linear,background-color .25s linear;
+	-webkit-font-smoothing: subpixel-antialiased;
+	text-align: center; 
+	cursor: pointer;
+	-webkit-user-select: none;
+	display: inline-block;
+}
+
+input.flat:hover {
+	color: #fff; 
+	background-color: #19c0cc; 
+	border: none;
+}
+	
+	
+input.flat:active {
+	color: #fff; 
+	background-color: #008b95; 
+	border: none;
+}
+	
+/* Выключатель on/off */
+
+.cmn-toggle {
+  position: absolute;
+  margin-left: -9999px;
+  visibility: hidden;
+}
+.cmn-toggle + label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+
+input.cmn-toggle-round + label {
+  padding: 2px;
+  width: 50px;
+  height: 30px;
+  background-color: #dddddd;
+  border-radius: 60px;
+}
+input.cmn-toggle-round + label:before,
+input.cmn-toggle-round + label:after {
+  display: block;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  bottom: 1px;
+  content: "";
+}
+input.cmn-toggle-round + label:before {
+  right: 1px;
+  background-color: #f1f1f1;
+  border-radius: 60px;
+  transition: background 0.4s;
+}
+input.cmn-toggle-round + label:after {
+  width: 30px;
+  background-color: #fff;
+  border-radius: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: margin 0.4s;
+}
+input.cmn-toggle-round:checked + label:before {
+  background-color: #008b95;
+}
+input.cmn-toggle-round:checked + label:after {
+  margin-left: 30px;
+}

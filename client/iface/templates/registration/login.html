@@ -1,0 +1,32 @@
+
+{% load staticfiles %}
+
+<html>
+<body bgcolor="#ffffff">
+
+<header>
+	<link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <div class="page-header">Spectral chart</div> 
+</header>
+
+<ul id="navbar">
+  <li><a href="http://127.0.0.1:8000/">Main</a></li>  
+  <li><a href="http://127.0.0.1:8000/upload_file/">Add data</a></li>
+  <li><a href="http://127.0.0.1:8000/about/">About</a></li>
+  <li><a href="http://127.0.0.1:8000/login/">Login</a></li>
+  <div class="user_name" style="color:red">{{ user.username }}</div>  
+</ul>	
+
+
+{% block content %}
+  
+  <form method="post">
+    {% csrf_token %}    	
+	
+	{{ form.as_p }}	    
+
+    <p><button type="submit">Login</button></p>
+  </form>
+  
+{% endblock %}
+
