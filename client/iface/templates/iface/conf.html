@@ -17,10 +17,32 @@
   <li><a href="/conf/" class="active_menu">КОНФИГУРАЦИЯ</a></li> 
 </ul>   
 
+
+
+
 <body>
 
+
+		<div id="snackbar">Настройки сохранены</div>
+		<script>
+		function show_snackbar() {
+			// Get the snackbar DIV
+			var x = document.getElementById("snackbar")
+
+			// Add the "show" class to DIV
+			x.className = "show";
+
+			// After 3 seconds, remove the show class from DIV
+			setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+		}
+		</script>
+		
+		
+
         <div class="tabs">
-            <input id="tab1" type="radio" name="tabs" checked>
+		
+		
+            <input id="tab1" type="radio" name="tabs">
             <label for="tab1" title="Основные настройки">Основные настройки</label>
             <input id="tab2" type="radio" name="tabs">
             <label for="tab2" title="Ethernet">Ethernet</label>
@@ -30,25 +52,52 @@
             <label for="tab4" title="ModBus">ModBus</label>
             <input id="tab5" type="radio" name="tabs">
             <label for="tab5" title="Wi-Fi">Wi-Fi</label>
-            
-            
-            <section id="content-tab1">
-        
-                <form action="/conf/" method="post">
+			
+			<script>   
+
+                    if (localStorage.getItem('tab_state') == null) {
+                      document.getElementById("tab1").setAttribute('checked','checked');
+                    }
+			
+                    if (localStorage.getItem('tab_state') == "tab1") {
+                      document.getElementById("tab1").setAttribute('checked','checked');
+                    }
+					
+					if (localStorage.getItem('tab_state') == "tab2") {
+                      document.getElementById("tab2").setAttribute('checked','checked');
+                    }
+					
+					if (localStorage.getItem('tab_state') == "tab3") {
+                      document.getElementById("tab3").setAttribute('checked','checked');
+                    }
+					
+					if (localStorage.getItem('tab_state') == "tab4") {
+                      document.getElementById("tab4").setAttribute('checked','checked');
+                    }
+					
+					if (localStorage.getItem('tab_state') == "tab5") {
+                      document.getElementById("tab5").setAttribute('checked','checked');
+                    }
+
+			</script>
+			
+            <section id="content-tab1">        
+                <form action="/conf/" method="post" onClick="myFunction1()">
                                 
                 {% csrf_token %}                                
                 								
                 <div class="text_mini">Параметры учетной записи</div>
-                <p>{{ main_settings.user_login }} {{ main_settings.user_login.errors }} </p>
+                <p>{{ main_settings.user_login }} </p>
 				
-                <p>{{ main_settings.user_password }} {{ main_settings.user_password.errors }}</p>                
-                <p>{{ main_settings.user_password_confirm }} {{ main_settings.user_password_confirm.errors }} </p>
+                <p>{{ main_settings.user_password }} </p>                
+                <p>{{ main_settings.user_password_confirm }} </p> 
                                                 
                 <div class="text_mini">Настройка даты и времени</div>               
-                <p>{{ main_settings.datetime }} {{ main_settings.datetime.errors }}</p>
+                <p>{{ main_settings.datetime }} </p>
 				
-				<p><input type="checkbox" name="synctime_checkbox" {% if main_settings.sync_time %} checked="checked" {% endif %}/>Включить синхронизацию времени</p>  
-				<p>{{ main_settings.sync_server }} {{ main_settings.sync_server.errors }}</p>
+				<!-- <p><input type="checkbox" name="synctime_checkbox" {% if main_settings.sync_time %} checked="checked" {% endif %}/> -->
+				<a class="text_mini">Cинхронизация даты и времени </a></p>  
+				<p>{{ main_settings.sync_server }}</p> 
                 
                 <div class="text_mini">Период архивирования данных</div>
                 <p>{{ main_settings.period }} </p>
@@ -57,29 +106,79 @@
                 <p>{{ main_settings.remote_server }}</p>
                 
             
-                <input type="submit" class="flat" value="Сохранить" />
-                
+                <input type="submit" class="flat" value="Сохранить">  								
+			
+				<script>			
+						function myFunction1() 
+						{
+							localStorage["tab_state"] = "tab1";
+						}										
+				</script>
+				
+				{% if var_mes %} <script> show_snackbar() </script> {% endif %}
+				
                 </form> 
-                
-                
+            </section>
+			
+            <section id="content-tab2">                
+				<form action="/conf/" method="post" onClick="myFunction2()">
+                                
+                {% csrf_token %}                                
+                								
+                <div class="text_mini">IP</div>
+                <p>{{ ethernet_settings.ip }} </p>
+                                                
+                <div class="text_mini">Маска</div>               
+                <p>{{  ethernet_settings.mask }} </p>
+				
+				<div class="text_mini">Шлюз</div>               
+                <p>{{  ethernet_settings.gateway }} </p>
+				
+				<div class="text_mini">DNS</div>               
+                <p>{{  ethernet_settings.dns }} </p>
+            
+                <input type="submit" class="flat" value="Сохранить" />            
 
+				<script>			
+						function myFunction2() 
+						{
+							localStorage["tab_state"] = "tab2";
+						}				
+				</script>
 
+				
+                </form>                 
             </section>
-            <section id="content-tab2">
-                <p> Microsoft Windows (произносится [майкрософт ви́ндоус]) — семейство проприетарных операционных систем корпорации Microsoft, ориентированных на применение графического интерфейса при управлении. </p>
-                <p> Изначально Windows была всего лишь графической надстройкой для MS-DOS. По состоянию на март 2013 года под управлением операционных систем семейства Windows по данным ресурса NetMarketShare (Net Applications) работает около 90 % персональных компьютеров[1]. Операционные системы Windows работают на платформах x86, x86-64, IA-64, ARM. </p>
-                
-                <a href="#" class="flat" onClick="alert('Настройки сохранены')">Сохранить</a>
-                
+			
+            <section id="content-tab3" >
+				<form action="/conf/" method="post" onClick="myFunction3()">
+                                
+                {% csrf_token %}                                
+                								
+                <div class="text_mini">Скорость</div>
+                <p>{{ rs485_settings.speed }} </p>
+                                                
+                <div class="text_mini">Паритет</div>               
+                <p>{{  rs485_settings.parity }} </p>
+				
+				<div class="text_mini">Количество STOP-бит</div>               
+                <p>{{ rs485_settings.stop_bit }} </p>
+				
+				<div class="text_mini">Таймаут</div>               
+                <p>{{ rs485_settings.timeout }} </p>
+            
+                <input type="submit" class="flat" value="Сохранить" />                
+				
+				<script>			
+						function myFunction3() 
+						{
+							localStorage["tab_state"] = "tab3";
+						}				
+				</script>						
+				
+                </form>                                   
             </section>
-            <section id="content-tab3">
-                <p> HTML5 (англ. HyperText Markup Language, version 5) — язык для структурирования и представления содержимого всемирной паутины. Это пятая версия HTML, последняя (четвёртая) версия которого была стандартизирована в 1997 году. По состоянию на октябрь 2013 года, HTML5 ещё находится в разработке, но, фактически, является рабочим стандартом (англ. HTML Living Standard). Цель разработки HTML5 — улучшение уровня поддержки мультимедиа-технологий, сохраняя при этом удобочитаемость кода для человека и простоту анализа для парсеров. </p>
-                <p> Во всемирной паутине долгое время использовались стандарты HTML 4.01 и XHTML 1.1, и веб-страницы на практике оказывались свёрстаны с использованием смеси особенностей, представленных различными спецификациями, включая спецификации программных продуктов, например веб-браузеров, а также сложившихся общеупотребительных приёмов. HTML5 был создан, как единый язык разметки, который мог бы сочетать синтаксические нормы HTML и XHTML. Он расширяет, улучшает и рационализирует разметку документов, а также добавляет единое API для сложных веб-приложений. </p>
-                
-                <a href="#" class="flat" onClick="alert('Настройки сохранены')">Сохранить</a>
-                
-                
-            </section>
+			
             <section id="content-tab4">
                 <p> Спецификация CSS3 — это неоспоримое будущее в области декоративного оформления веб-страниц, и ее разработка еще далека от завершения. Большинство модулей все еще продолжает совершенствоваться и модифицироваться, и ни один браузер не поддерживает все модули. Это означает, что CSS3 испытывает такие же сложности, как и HTML5. Веб-разработчикам нужно решать, какие возможности использовать, а какие игнорировать, а также каким образом заполнить зияющие пробелы в браузерной поддержке. </p>
                 
@@ -114,14 +213,15 @@
                 <a href="#" class="flat" onClick="alert('Настройки сохранены')">Сохранить</a>
                 
             </section>
-            <section id="content-tab5">
-                <p> Спецификация CSS3 — это неоспоримое будущее в области декоративного оформления веб-страниц, и ее разработка еще далека от завершения. Большинство модулей все еще продолжает совершенствоваться и модифицироваться, и ни один браузер не поддерживает все модули. Это означает, что CSS3 испытывает такие же сложности, как и HTML5. Веб-разработчикам нужно решать, какие возможности использовать, а какие игнорировать, а также каким образом заполнить зияющие пробелы в браузерной поддержке. </p>
-                <p> CSS3 не является частью спецификации HTML5. Эти два стандарта были разработаны отдельно друг от друга, разными людьми, работающими в разное время в различных местах. Но даже организация W3C призывает веб-разработчиков использовать HTML5 и CSS3 вместе, как часть одной новой волны современного веб-дизайна. </p>
-                
+            <section id="content-tab5"  hidden="true">
+                                
                 <a href="#" class="flat" onClick="alert('Настройки сохранены')">Сохранить</a>
                 
                 
             </section>
+			
+			
+
             
         </div>
 
