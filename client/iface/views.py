@@ -22,7 +22,7 @@ def conf (request):
     #except MainSettings.DoesNotExist:   
         #print('data model no exist')
     
-    
+    var_mes = True  
     
     form_main = MainSettingsForm(instance=main_settings) 
     form_ethernet = EthernetSettingsForm(instance=ethernet_settings)  
@@ -33,12 +33,12 @@ def conf (request):
         if form_main.is_valid():      
                                                   
             form_main.save()
-            var_mes = True
+            
                 
         else:
             
             print('form no valid')
-            var_mes = False      
+                
             
         
 
