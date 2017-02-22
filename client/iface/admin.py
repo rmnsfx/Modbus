@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import *
 
-# Register your models here.
+admin.site.register(MainSettings)
+admin.site.register(EthernetSettings)
+admin.site.register(rs485Settings)

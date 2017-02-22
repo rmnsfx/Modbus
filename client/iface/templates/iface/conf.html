@@ -87,26 +87,29 @@
                 {% csrf_token %}                                
                 								
                 <div class="text_mini">Параметры учетной записи</div>
-                <p>{{ main_settings.user_login }} </p>
+                <p>{{ main_settings.user_login }} <div class="error_message"> {{ main_settings.user_login.errors }}</p>
 				
-                <p>{{ main_settings.user_password }} </p>                
-                <p>{{ main_settings.user_password_confirm }} </p> 
+                <p>{{ main_settings.user_password }} <div class="error_message"> {{ main_settings.user_password.errors }}</p>                
+                <p>{{ main_settings.user_password_confirm }} <div class="error_message"> {{ main_settings.user_password_confirm.errors }}</p> 
                                                 
                 <div class="text_mini">Настройка даты и времени</div>               
-                <p>{{ main_settings.datetime }} </p>
+                <p>{{ main_settings.datetime }} <div class="error_message"> {{ main_settings.datetime.errors }}</p>
 				
-				<!-- <p><input type="checkbox" name="synctime_checkbox" {% if main_settings.sync_time %} checked="checked" {% endif %}/> -->
+				<p>{{ main_settings.sync_time }}
+				
+				{% if main_settings.sync_time == true %} {% endif %} 
+				
 				<a class="text_mini">Cинхронизация даты и времени </a></p>  
-				<p>{{ main_settings.sync_server }}</p> 
-                
+				<p>{{ main_settings.sync_server }} <div class="error_message"> {{ main_settings.sync_server.errors }}</p> 				
+				
                 <div class="text_mini">Период архивирования данных</div>
-                <p>{{ main_settings.period }} </p>
+                <p>{{ main_settings.period }} <div class="error_message"> {{ main_settings.period.errors }} </p>
                 
                 <div class="text_mini">Удаленное хранение данных</div>
-                <p>{{ main_settings.remote_server }}</p>
+                <p>{{ main_settings.remote_server }} <div class="error_message"> {{ main_settings.remote_server.errors }}</p>
                 
             
-                <input type="submit" class="flat" value="Сохранить">  								
+                <input type="submit" name="submit_main_form" class="flat" value="Сохранить">  								
 			
 				<script>			
 						function myFunction1() 
@@ -126,18 +129,18 @@
                 {% csrf_token %}                                
                 								
                 <div class="text_mini">IP</div>
-                <p>{{ ethernet_settings.ip }} </p>
+                <p>{{ ethernet_settings.ip }} <div class="error_message"> {{ ethernet_settings.ip.errors }}</p>
                                                 
                 <div class="text_mini">Маска</div>               
-                <p>{{  ethernet_settings.mask }} </p>
+                <p>{{  ethernet_settings.mask }} <div class="error_message"> {{ ethernet_settings.mask.errors }}</p>
 				
 				<div class="text_mini">Шлюз</div>               
-                <p>{{  ethernet_settings.gateway }} </p>
+                <p>{{  ethernet_settings.gateway }} <div class="error_message"> {{  ethernet_settings.gateway.errors }}</p>
 				
 				<div class="text_mini">DNS</div>               
-                <p>{{  ethernet_settings.dns }} </p>
+                <p>{{  ethernet_settings.dns }} <div class="error_message"> {{  ethernet_settings.dns.errors }}</p>
             
-                <input type="submit" class="flat" value="Сохранить" />            
+                <input type="submit" name="submit_ethernet_form" class="flat" value="Сохранить" />            
 
 				<script>			
 						function myFunction2() 
@@ -156,18 +159,18 @@
                 {% csrf_token %}                                
                 								
                 <div class="text_mini">Скорость</div>
-                <p>{{ rs485_settings.speed }} </p>
+                <p>{{ rs485_settings.speed }} <div class="error_message"> {{ rs485_settings.speed.errors }}</p>
                                                 
                 <div class="text_mini">Паритет</div>               
-                <p>{{  rs485_settings.parity }} </p>
+                <p>{{  rs485_settings.parity }} <div class="error_message"> {{  rs485_settings.parity.errors }}</p>
 				
 				<div class="text_mini">Количество STOP-бит</div>               
-                <p>{{ rs485_settings.stop_bit }} </p>
+                <p>{{ rs485_settings.stop_bit }} <div class="error_message"> {{ rs485_settings.stop_bit.errors }}</p>
 				
 				<div class="text_mini">Таймаут</div>               
-                <p>{{ rs485_settings.timeout }} </p>
+                <p>{{ rs485_settings.timeout }} <div class="error_message"> {{ rs485_settings.timeout.errors }} </p>
             
-                <input type="submit" class="flat" value="Сохранить" />                
+                <input type="submit" name="submit_rs485_form" class="flat" value="Сохранить" />                
 				
 				<script>			
 						function myFunction3() 
