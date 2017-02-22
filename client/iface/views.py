@@ -19,15 +19,17 @@ def conf (request):
 	main_settings = MainSettings.objects.get(pk=1)
 	ethernet_settings = EthernetSettings.objects.get(user_login_id=main_settings.pk)
 	rs485_settings = rs485Settings.objects.get(user_login_id=main_settings.pk)
+	modbus_settings = ModbusSettings.objects.get(user_login_id=main_settings.pk)
 	
 	#except MainSettings.DoesNotExist:	 
 		#print('data model no exist')	  
 
-	var_mes = False 
+	save_mes = False 
 	
 	form_main = MainSettingsForm(instance=main_settings) 
 	form_ethernet = EthernetSettingsForm(instance=ethernet_settings)  
 	form_rs485 = rs485SettingsForm(instance=rs485_settings)		 
+	form_modbus = ModbusSettingsForm(instance=modbus_settings)		 
 	
 	
 
@@ -39,7 +41,7 @@ def conf (request):
 			
 			form_main.save()
 			
-			var_mes = True 
+			save_mes = True 
 			
 		else:
 			
@@ -59,7 +61,7 @@ def conf (request):
 		
 			form_ethernet.save()
 			
-			var_mes = True 
+			save_mes = True 
 			
 		else:
 			
@@ -70,23 +72,44 @@ def conf (request):
 		
 		form_rs485 = rs485SettingsForm(request.POST, instance=rs485_settings)
 		
-		form_rs485.user_login_id = 1
+		form_rs485.user_login_id = main_settings.pk
 		
 		
 		if form_rs485.is_valid():
 	
 			form_rs485.save()
 			
-			var_mes = True 
+			save_mes = True 
 			
 		else:
 			
 			print('rs485_form no valid')
 			print(form_rs485.errors)
+			
+			
 		
-
+	if request.method == 'POST' and 'submit_modbus_form' in request.POST:
 		
-	return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'var_mes': var_mes})	  
+		
+		form_modbus = ModbusSettingsForm(request.POST, instance=modbus_settings)
+		
+		#form_modbus.user_login_id = main_settings.pk
+		
+		
+		if form_modbus.is_valid():
+	
+			form_modbus.save()
+			
+			save_mes = True 
+			
+		else:
+			
+			print('modbus_form no valid')
+			print(form_modbus.errors)
+			
+	loop_times = range(0, 8)		
+		
+	return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : form_modbus,'save_mes': save_mes, 'loop_times':loop_times})	  
 	#return render_to_response('iface/conf.html', {'main_settings': form_main}, context_instance=RequestContext(request))
 	
 	

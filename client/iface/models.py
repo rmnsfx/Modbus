@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class MainSettings(models.Model):
     id_MainSettings = models.AutoField(primary_key=True)
-    user_login = models.CharField(max_length=50, null=True, unique=True)
+    user_login = models.CharField(max_length=50, null=False, unique=True)
     user_password = models.CharField(max_length=50, null=True)    
     datetime = models.DateTimeField(null=True)
     sync_time = models.BooleanField()
@@ -32,6 +32,25 @@ class rs485Settings(models.Model):
     id_rs485Settings = models.AutoField(primary_key=True)
     user_login = models.ForeignKey(MainSettings, default=0)
     speed = models.IntegerField(null=True)
-    parity = models.IntegerField(choices=((1, "Not relevant"), (2, "Review")) )
+    parity = models.IntegerField(null=True)
     stop_bit = models.IntegerField(null=True)
     timeout = models.IntegerField(null=True)
+	
+
+class ModbusSettings(models.Model):
+
+	id_ModbusSettings = models.AutoField(primary_key=True)
+	user_login = models.ForeignKey(MainSettings, default=0)
+	adr_item = models.IntegerField(null=True)
+	typr_reg = models.IntegerField(null=True)
+	index_reg = models.IntegerField(null=True)
+	type_data = models.IntegerField(null=True)
+	size = models.IntegerField(null=True)
+	multiplier = models.IntegerField(null=True)
+	tag = models.CharField(max_length=50, null=True)    
+	archiving = models.BooleanField()
+	
+
+	
+	
+	

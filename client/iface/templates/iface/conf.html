@@ -37,7 +37,7 @@
 		}
 		</script>
 		
-		
+		{% if save_mes %} <script> show_snackbar() </script> {% endif %}
 
         <div class="tabs">
 		
@@ -87,26 +87,26 @@
                 {% csrf_token %}                                
                 								
                 <div class="text_mini">Параметры учетной записи</div>
-                <p>{{ main_settings.user_login }} <div class="error_message"> {{ main_settings.user_login.errors }}</p>
+                <p>{{ main_settings.user_login }} <div class="error_message"> {{ main_settings.user_login.errors | safe}}</p>
 				
-                <p>{{ main_settings.user_password }} <div class="error_message"> {{ main_settings.user_password.errors }}</p>                
-                <p>{{ main_settings.user_password_confirm }} <div class="error_message"> {{ main_settings.user_password_confirm.errors }}</p> 
+                <p>{{ main_settings.user_password }} <div class="error_message"> {{ main_settings.user_password.errors | safe}}</p>                
+                <p>{{ main_settings.user_password_confirm }} <div class="error_message"> {{ main_settings.user_password_confirm.errors | safe}}</p> 
                                                 
                 <div class="text_mini">Настройка даты и времени</div>               
-                <p>{{ main_settings.datetime }} <div class="error_message"> {{ main_settings.datetime.errors }}</p>
+                <p>{{ main_settings.datetime }} <div class="error_message"> {{ main_settings.datetime.errors | safe}}</p>
 				
 				<p>{{ main_settings.sync_time }}
 				
 				{% if main_settings.sync_time == true %} {% endif %} 
 				
 				<a class="text_mini">Cинхронизация даты и времени </a></p>  
-				<p>{{ main_settings.sync_server }} <div class="error_message"> {{ main_settings.sync_server.errors }}</p> 				
+				<p>{{ main_settings.sync_server }} <div class="error_message"> {{ main_settings.sync_server.errors | safe}}</p> 				
 				
                 <div class="text_mini">Период архивирования данных</div>
-                <p>{{ main_settings.period }} <div class="error_message"> {{ main_settings.period.errors }} </p>
+                <p>{{ main_settings.period }} <div class="error_message"> {{ main_settings.period.errors | safe}} </p>
                 
                 <div class="text_mini">Удаленное хранение данных</div>
-                <p>{{ main_settings.remote_server }} <div class="error_message"> {{ main_settings.remote_server.errors }}</p>
+                <p>{{ main_settings.remote_server }} <div class="error_message"> {{ main_settings.remote_server.errors | safe}}</p>
                 
             
                 <input type="submit" name="submit_main_form" class="flat" value="Сохранить">  								
@@ -118,8 +118,6 @@
 						}										
 				</script>
 				
-				{% if var_mes %} <script> show_snackbar() </script> {% endif %}
-				
                 </form> 
             </section>
 			
@@ -129,16 +127,16 @@
                 {% csrf_token %}                                
                 								
                 <div class="text_mini">IP</div>
-                <p>{{ ethernet_settings.ip }} <div class="error_message"> {{ ethernet_settings.ip.errors }}</p>
+                <p>{{ ethernet_settings.ip }} <div class="error_message"> {{ ethernet_settings.ip.errors | safe}}</p>
                                                 
                 <div class="text_mini">Маска</div>               
-                <p>{{  ethernet_settings.mask }} <div class="error_message"> {{ ethernet_settings.mask.errors }}</p>
+                <p>{{  ethernet_settings.mask }} <div class="error_message"> {{ ethernet_settings.mask.errors | safe}}</p>
 				
 				<div class="text_mini">Шлюз</div>               
-                <p>{{  ethernet_settings.gateway }} <div class="error_message"> {{  ethernet_settings.gateway.errors }}</p>
+                <p>{{  ethernet_settings.gateway }} <div class="error_message"> {{  ethernet_settings.gateway.errors | safe}}</p>
 				
 				<div class="text_mini">DNS</div>               
-                <p>{{  ethernet_settings.dns }} <div class="error_message"> {{  ethernet_settings.dns.errors }}</p>
+                <p>{{  ethernet_settings.dns }} <div class="error_message"> {{  ethernet_settings.dns.errors | safe}}</p>
             
                 <input type="submit" name="submit_ethernet_form" class="flat" value="Сохранить" />            
 
@@ -156,19 +154,19 @@
             <section id="content-tab3" >
 				<form action="/conf/" method="post" onClick="myFunction3()">
                                 
-                {% csrf_token %}                                
+                {% csrf_token %}                              
                 								
                 <div class="text_mini">Скорость</div>
-                <p>{{ rs485_settings.speed }} <div class="error_message"> {{ rs485_settings.speed.errors }}</p>
+                <p>{{ rs485_settings.speed }} <div class="error_message"> {{ rs485_settings.speed.errors | safe}}</p>
                                                 
                 <div class="text_mini">Паритет</div>               
-                <p>{{  rs485_settings.parity }} <div class="error_message"> {{  rs485_settings.parity.errors }}</p>
+                <p>{{  rs485_settings.parity }} <div class="error_message"> {{  rs485_settings.parity.errors | safe}}</p>
 				
 				<div class="text_mini">Количество STOP-бит</div>               
-                <p>{{ rs485_settings.stop_bit }} <div class="error_message"> {{ rs485_settings.stop_bit.errors }}</p>
+                <p>{{ rs485_settings.stop_bit }} <div class="error_message"> {{ rs485_settings.stop_bit.errors | safe}}</p>
 				
 				<div class="text_mini">Таймаут</div>               
-                <p>{{ rs485_settings.timeout }} <div class="error_message"> {{ rs485_settings.timeout.errors }} </p>
+                <p>{{ rs485_settings.timeout }} <div class="error_message"> {{ rs485_settings.timeout.errors | safe}} </p>
             
                 <input type="submit" name="submit_rs485_form" class="flat" value="Сохранить" />                
 				
@@ -183,20 +181,35 @@
             </section>
 			
             <section id="content-tab4">
-                <p> Спецификация CSS3 — это неоспоримое будущее в области декоративного оформления веб-страниц, и ее разработка еще далека от завершения. Большинство модулей все еще продолжает совершенствоваться и модифицироваться, и ни один браузер не поддерживает все модули. Это означает, что CSS3 испытывает такие же сложности, как и HTML5. Веб-разработчикам нужно решать, какие возможности использовать, а какие игнорировать, а также каким образом заполнить зияющие пробелы в браузерной поддержке. </p>
-                
-                
-                <form id = "cb1_form" action="/conf/" method="post">
+                <form action="/conf/" method="post" onClick="myFunction4()">
+				
                 {% csrf_token %}                
-                <input type="checkbox" id="cmn-toggle-1" class="cmn-toggle cmn-toggle-round" onClick="myFunction()">
+				
+				{% for i in loop_times %}
+				
+				<p>
+				
+				{{i}}{{ modbus_settings.adr_item }} 		
+				{{ modbus_settings.typr_reg }} 		
+				{{ modbus_settings.index_reg}} 		
+				{{ modbus_settings.type_data }} 	
+				{{ modbus_settings.size }} 			
+				{{ modbus_settings.multiplier }} 	
+				{{ modbus_settings.tag }} 			
+				{{ modbus_settings.archiving }} 	
+				</p>
+				
+				{% endfor %}
+				
+				
+				
+                <!-- <input type="checkbox" id="cmn-toggle-1" class="cmn-toggle cmn-toggle-round" onClick="myFunction()">
                 <label for="cmn-toggle-1" name="cb1" value="" ></label>             
                 <script>    
                     if (localStorage.getItem('cb1') == "true") {
                       document.getElementById("cmn-toggle-1").setAttribute('checked','checked');
                     }
-                </script>               
-                </form>             
-
+                </script>                
                 
                 <script>
                     function myFunction() {
@@ -209,13 +222,22 @@
                             document.forms['cb1_form'].submit()                     
                         }
                         else localStorage.setItem('cb1', "false");
-                    }
-                    
-                </script>
+                    }                    
+                </script> -->
+				
+				<script>			
+						function myFunction4() 
+						{
+							localStorage["tab_state"] = "tab4";
+						}				
+				</script>					
                         
-                <a href="#" class="flat" onClick="alert('Настройки сохранены')">Сохранить</a>
+                <input type="submit" name="submit_modbus_form" class="flat" value="Сохранить" />
                 
+				</form>      				
             </section>
+			
+			
             <section id="content-tab5"  hidden="true">
                                 
                 <a href="#" class="flat" onClick="alert('Настройки сохранены')">Сохранить</a>

@@ -1,12 +1,9 @@
 from django import forms
-from .models import MainSettings, EthernetSettings, rs485Settings
+from .models import *
 from datetime import timedelta, datetime, tzinfo
 from django.forms import ModelForm
 from django.forms import fields 
- 
-class CheckBoxForm(forms.Form):
-	
-	checkbox = forms.BooleanField
+
 	
 class MainSettingsForm(forms.ModelForm):
 	
@@ -23,9 +20,7 @@ class MainSettingsForm(forms.ModelForm):
 	class Meta:
 		model = MainSettings
 		fields = '__all__'
-		#fields = ['id_MainSettings', 'user_login', 'user_password', 'sync_time', 'sync_server', 'datetime', 'period', 'remote_server']
-		
-  
+		#fields = ['id_MainSettings', 'user_login', 'user_password', 'sync_time', 'sync_server', 'datetime', 'period', 'remote_server'] 
 	
 	def clean(self):		 
 		# Определяем правило валидации
@@ -38,28 +33,42 @@ class MainSettingsForm(forms.ModelForm):
 		
 class EthernetSettingsForm(forms.ModelForm):
 	
-	user_login = forms.IntegerField(required=False, widget=forms.HiddenInput())
 	ip = forms.GenericIPAddressField(widget=forms.TextInput(attrs={'placeholder': '1.1.1.1', 'required': 'true'}))
 	mask = forms.GenericIPAddressField(widget=forms.TextInput(attrs={'placeholder': '255.255.255.0', 'required': 'true'}))
 	gateway = forms.GenericIPAddressField(widget=forms.TextInput(attrs={'placeholder': '192.168.0.1', 'required': 'true'}))
 	dns = forms.GenericIPAddressField(widget=forms.TextInput(attrs={'placeholder': '8.8.8.8', 'required': 'false'}))
 	
 	class Meta:
-	   model = EthernetSettings		  
-	   fields = '__all__'
+		model = EthernetSettings		
+		exclude = ['user_login']	   
+		
 	   
 	   
 	   
 class rs485SettingsForm(forms.ModelForm):
-			
-	user_login = forms.IntegerField(required=False, widget=forms.HiddenInput())
+		
 	speed = forms.IntegerField(widget=forms.TextInput(attrs={'placeholder': '11500', 'required': 'true'}))
-	parity = forms.IntegerField()
+	parity = forms.ChoiceField(widget=forms.Select(attrs={'style': 'width:default%'}), choices=(('1', 'Четность'), ('2', 'Нечетность')))
 	stop_bit = forms.IntegerField(widget=forms.TextInput(attrs={'placeholder': '1', 'required': 'true'}))
 	timeout = forms.IntegerField(widget=forms.TextInput(attrs={'placeholder': '50', 'required': 'true'}))
 	
 	class Meta:
-		model = rs485Settings
-		fields = '__all__'
+		model = rs485Settings		
+		exclude = ['user_login']
 		
 	
+	
+class ModbusSettingsForm(forms.ModelForm):	
+		
+	adr_item = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
+	typr_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
+	index_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
+	type_data = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
+	size = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
+	multiplier = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
+	tag = forms.CharField(widget=forms.TextInput(attrs={'required': 'true'}))	   
+	archiving = forms.BooleanField(widget=forms.TextInput(attrs={'required': 'false'}))
+	
+	class Meta:
+		model = ModbusSettings		
+		exclude = ['user_login']
