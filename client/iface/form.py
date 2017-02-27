@@ -67,8 +67,10 @@ class ModbusSettingsForm(forms.ModelForm):
 	size = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
 	multiplier = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
 	tag = forms.CharField(widget=forms.TextInput(attrs={'required': 'true'}))	   
-	archiving = forms.BooleanField(widget=forms.TextInput(attrs={'required': 'false'}))
+	#archiving = forms.BooleanField(widget=forms.TextInput(attrs={'required': 'false'}))
+	archiving = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
 	
 	class Meta:
 		model = ModbusSettings		
 		exclude = ['user_login']
+		

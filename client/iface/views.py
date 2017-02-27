@@ -107,7 +107,7 @@ def conf (request):
 			print('modbus_form no valid')
 			print(form_modbus.errors)
 			
-	loop_times = range(0, 8)		
+	loop_times = range(0, 1)		
 		
 	return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : form_modbus,'save_mes': save_mes, 'loop_times':loop_times})	  
 	#return render_to_response('iface/conf.html', {'main_settings': form_main}, context_instance=RequestContext(request))

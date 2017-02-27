@@ -185,11 +185,83 @@
 				
                 {% csrf_token %}                
 				
-				{% for i in loop_times %}
 				
+				 <table border="0">
+					<!-- <caption>Таблица размеров обуви</caption> -->
+					
+					<tr>
+					<th>Адрес модуля</th>
+					<th>Тип регистра</th>
+					<th>Индекс регистра</th>
+					<th>Тип данных</th>
+					<th>Размер</th>
+					<th>Множитель</th>
+					<th>Тэг</th>					
+					</tr>
+					
+					
+					
+					<tr>
+					<td>{{ modbus_settings.adr_item }} </td>
+					<td>{{ modbus_settings.typr_reg }} </td>
+					<td>{{ modbus_settings.index_reg}} </td>
+					<td>{{ modbus_settings.type_data }}  </td>
+					<td>{{ modbus_settings.size }} </td>
+					<td>{{ modbus_settings.multiplier }} </td>
+					<td>{{ modbus_settings.tag }}  </td>					
+					<td><label class="switch" name="sw_1"> {{ modbus_settings.archiving }} <div class="slider round"></div></label> </td>
+					
+					<!-- <td> <label class="switch" name="sw_1"> <input type="checkbox" id="switch_1" onClick="myFunction()"> <div class="slider round"></div></label> </td>-->	
+
+					<script>    
+						//Сохраняем состояние
+						if (localStorage.getItem('sw_1') == "true") 
+						{
+							//document.getElementById("switch_1").setAttribute('checked','checked');
+							document.getElementById("switch_1").checked = true;
+						}
+						
+						//Работаем с чекбоксом
+						/*if (localStorage.getItem('sw_1') == "true") 
+						{
+							document.getElementById("id_archiving").checked = false;
+							//document.getElementById("id_archiving").value= true;
+							document.getElementById("switch_1").checked = true;
+							
+						}
+						else
+						{						
+							document.getElementById("id_archiving").checked = true;						
+							//document.getElementById("id_archiving").setAttribute('value','False');
+							//document.getElementById("id_archiving").value= false;
+							
+						}*/						
+
+						
+						function myFunction() 
+						{
+							var elm = document.getElementById('switch_1');                      
+                        
+							if( elm.checked == true ) 
+							{
+								//alert('запуск процесса')
+								localStorage.setItem('sw_1', "true");
+								
+							}
+							else localStorage.setItem('sw_1', "false");
+						}                    
+					</script>  					
+					</tr>
+					
+				</table>
+				
+				
+				
+				
+				<!-- {% for i in loop_times %}				
 				<p>
 				
-				{{i}}{{ modbus_settings.adr_item }} 		
+				{{ modbus_settings.adr_item }} 		
 				{{ modbus_settings.typr_reg }} 		
 				{{ modbus_settings.index_reg}} 		
 				{{ modbus_settings.type_data }} 	
@@ -199,7 +271,7 @@
 				{{ modbus_settings.archiving }} 	
 				</p>
 				
-				{% endfor %}
+				{% endfor %} -->
 				
 				
 				
