@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# coding: utf-8
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import Context, RequestContext
@@ -5,37 +7,52 @@ from django.shortcuts import render_to_response
 from .form import *
 from .models import MainSettings, EthernetSettings, rs485Settings
 from django.contrib import messages
+from datetime import datetime
+import time
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+import itertools
 
 
 def main (request):
 
-	return render_to_response('iface/main.html')
+	array = Data.objects.values_list('data', flat=True)
+	array = list(array)
+	time_value = Data.objects.values_list('datetime', flat=True)
+	time_value = list(time_value)
+	
+	time_data =  json.dumps(time_value, cls=DjangoJSONEncoder)
+	
+	return render(request, 'iface/main.html', {'array': array, 'time': time_data})
 
 def conf (request):
 			
-	#try:	 
-		
+#try:	 
+	
 	#main_settings = MainSettings.objects.get(user_login__contains="roman")
 	main_settings = MainSettings.objects.get(pk=1)
 	ethernet_settings = EthernetSettings.objects.get(user_login_id=main_settings.pk)
 	rs485_settings = rs485Settings.objects.get(user_login_id=main_settings.pk)
-	modbus_settings = ModbusSettings.objects.get(user_login_id=main_settings.pk)
+	modbus_settings = ModbusSettings.objects.get(user_login_id=main_settings.pk)			
 	
-	#except MainSettings.DoesNotExist:	 
-		#print('data model no exist')	  
-
-	save_mes = False 
+#except MainSettings.DoesNotExist:	 
+	#print('data model no exist')
+	#main_settings = None
+	#ethernet_settings = None
+	#rs485_settings = None
+	#modbus_settings = None
 	
 	form_main = MainSettingsForm(instance=main_settings) 
 	form_ethernet = EthernetSettingsForm(instance=ethernet_settings)  
 	form_rs485 = rs485SettingsForm(instance=rs485_settings)		 
-	form_modbus = ModbusSettingsForm(instance=modbus_settings)		 
-	
-	
+	form_modbus = ModbusSettingsForm(instance=modbus_settings)
+
+	save_mes = False 
 
 	if request.method == 'POST' and 'submit_main_form' in request.POST:
 		
 		form_main = MainSettingsForm(request.POST, instance=main_settings) 
+		
 		
 		if form_main.is_valid():   
 			
@@ -47,7 +64,8 @@ def conf (request):
 			
 			print('main_form no valid')
 			print(form_main.errors)
-			
+	
+	#else: form_main = None	
 			
 	if request.method == 'POST' and 'submit_ethernet_form' in request.POST:	   
 						
@@ -66,7 +84,8 @@ def conf (request):
 		else:
 			
 			print('ethernet_form no valid')			
-			
+	
+	#else: form_ethernet = None		
 		
 	if request.method == 'POST' and 'submit_rs485_form' in request.POST:
 		
@@ -86,7 +105,7 @@ def conf (request):
 			print('rs485_form no valid')
 			print(form_rs485.errors)
 			
-			
+	#else: form_rs485 = None		
 		
 	if request.method == 'POST' and 'submit_modbus_form' in request.POST:
 		
@@ -106,7 +125,9 @@ def conf (request):
 			
 			print('modbus_form no valid')
 			print(form_modbus.errors)
-			
+	
+	#else: form_modbus = None
+	
 	loop_times = range(0, 1)		
 		
 	return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : form_modbus,'save_mes': save_mes, 'loop_times':loop_times})	  
@@ -114,10 +135,10 @@ def conf (request):
 	
 	
 	
-	
-  
-	
-	
 def data (request):
 
 	return render_to_response('iface/data.html')
+	
+	
+	
+	

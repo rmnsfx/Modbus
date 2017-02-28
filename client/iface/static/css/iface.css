@@ -60,7 +60,8 @@ li {
 
 li a {
     display: block;
-    color: white;	
+    color: white;
+	font-weight: 700;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -72,11 +73,12 @@ li a {
 .active_menu {
     display: block;
     color: white;
-	font-weight: 900;
+	font-weight: 700;
     text-align: center;
     padding: 14px 16px;
-    text-decoration: none;
+    text-decoration: underline;
 	font-size: 20;
+	
  
 }
 

@@ -203,7 +203,7 @@
 					
 					<tr>
 					<td>{{ modbus_settings.adr_item }} </td>
-					<td>{{ modbus_settings.typr_reg }} </td>
+					<td>{{ modbus_settings.type_reg }} </td>
 					<td>{{ modbus_settings.index_reg}} </td>
 					<td>{{ modbus_settings.type_data }}  </td>
 					<td>{{ modbus_settings.size }} </td>
@@ -216,28 +216,10 @@
 					<script>    
 						//Сохраняем состояние
 						if (localStorage.getItem('sw_1') == "true") 
-						{
-							//document.getElementById("switch_1").setAttribute('checked','checked');
+						{							
 							document.getElementById("switch_1").checked = true;
-						}
-						
-						//Работаем с чекбоксом
-						/*if (localStorage.getItem('sw_1') == "true") 
-						{
-							document.getElementById("id_archiving").checked = false;
-							//document.getElementById("id_archiving").value= true;
-							document.getElementById("switch_1").checked = true;
-							
-						}
-						else
-						{						
-							document.getElementById("id_archiving").checked = true;						
-							//document.getElementById("id_archiving").setAttribute('value','False');
-							//document.getElementById("id_archiving").value= false;
-							
-						}*/						
-
-						
+						}						
+												
 						function myFunction() 
 						{
 							var elm = document.getElementById('switch_1');                      

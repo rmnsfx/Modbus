@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# coding: utf-8
 from django import forms
 from .models import *
 from datetime import timedelta, datetime, tzinfo
@@ -19,7 +21,8 @@ class MainSettingsForm(forms.ModelForm):
 
 	class Meta:
 		model = MainSettings
-		fields = '__all__'
+		exclude = ['change_datetime']		
+		#fields = '__all__'
 		#fields = ['id_MainSettings', 'user_login', 'user_password', 'sync_time', 'sync_server', 'datetime', 'period', 'remote_server'] 
 	
 	def clean(self):		 
@@ -61,7 +64,7 @@ class rs485SettingsForm(forms.ModelForm):
 class ModbusSettingsForm(forms.ModelForm):	
 		
 	adr_item = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	typr_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
+	type_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
 	index_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
 	type_data = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
 	size = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
