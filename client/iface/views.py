@@ -7,7 +7,7 @@ from django.shortcuts import render_to_response
 from .form import *
 from .models import MainSettings, EthernetSettings, rs485Settings
 from django.contrib import messages
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 from django.core.serializers.json import DjangoJSONEncoder
 import json
@@ -16,12 +16,13 @@ import itertools
 
 def main (request):
 
-	array = Data.objects.values_list('data', flat=True)
+		
+	array = Data.objects.values_list('data', flat=True).order_by('-data')[:100][::-1]
 	array = list(array)
-	time_value = Data.objects.values_list('datetime', flat=True)
+	time_value = Data.objects.values_list('datetime', flat=True).order_by('-datetime')[:100][::-1]
 	time_value = list(time_value)
 	
-	time_data =  json.dumps(time_value, cls=DjangoJSONEncoder)
+	time_data =	 json.dumps(time_value, cls=DatetimeEncoder)
 	
 	return render(request, 'iface/main.html', {'array': array, 'time': time_data})
 
@@ -140,5 +141,12 @@ def data (request):
 	return render_to_response('iface/data.html')
 	
 	
-	
+class DatetimeEncoder(json.JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, datetime):
+			return obj.strftime('%Y-%m-%d %H:%M:%S')
+		elif isinstance(obj, date):
+			return obj.strftime('%Y-%m-%d')
+		# Let the base class default method raise the TypeError
+		return json.JSONEncoder.default(self, obj)
 	

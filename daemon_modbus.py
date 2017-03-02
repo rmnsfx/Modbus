@@ -26,7 +26,7 @@ def mini_modbus():
 		
 		while True:
 		
-				instrument = minimalmodbus.Instrument('/dev/ttyUSB0', 5)				
+				instrument = minimalmodbus.Instrument('/dev/ttyUSB3', 5)				
 				#instrument.serial.port			 # this is the serial port name
 				instrument.serial.baudrate = 115200	  # Baud
 				instrument.serial.bytesize = 8
