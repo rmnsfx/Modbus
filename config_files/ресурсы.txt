@@ -1,0 +1,16 @@
+1. Armbian (with Win32DiskImager)
+2. Nginx
+3. uWSGI
+4. Postgresql
+5. Python-pip, Python3-pip
+5.1 minimalmodbus
+5.2 pyserial
+5.3 python-daemon
+5.4 sudo apt-get install python-psycopg2 (postgresql)
+5.5 sudo apt-get install libpq-dev (postgresql)
+5.6 sudo apt-get install uwsgi-plugin-python
+5.7 sudo apt-get install usb-modeswitch usb-modeswitch-data или AT^U2DIAG=0 -> OK (установить режим "модем", putty->serial)
+5.8 sudo apt-get install wvdial (для 3g модема), wvdialconf (`/etc/wvdial.conf') 
+(https://www.opennet.ru/tips/info/2609.shtml)
+
+
