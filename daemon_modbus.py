@@ -11,17 +11,24 @@ import minimalmodbus
 import psycopg2
 import datetime
 
+def write_log(mes):				
+		#f = open('/var/log/daemon_modbus.log', 'w+')
+		f = open('/home/roman/Modbus/daemon_modbus.log', 'a')
+		f.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+		f.write(str(' '))
+		f.write(str(mes))				 
+		f.close()
 
 def mini_modbus():
 
+		write_log('Start modbus \n')	
+		
 		try:
 			conn = psycopg2.connect("dbname='client' user='postgres2' host='localhost' password='1234'")
 		except:
-			print('Unable to connect to the database')
+			write_log('Unable to connect to the database (modbus) \n')
 			conn = None
 			
-		#conn = psycopg2.connect("dbname='client' user='postgres2' host='localhost' password='1234'")
-
 		pid = os.getpid()									
 		
 		while True:
@@ -38,23 +45,28 @@ def mini_modbus():
 				temperature = instrument.read_register(3023-1 , 2, 4, False)	
 				
 				#print(temperature)
-								
-				query =	 "INSERT INTO iface_data (data, module_number, user_login_id, datetime, pid) VALUES (%s, %s, %s, %s, %s);"
-				data = (temperature, 1, 1, datetime.datetime.now(), pid)
-				cursor = conn.cursor()
-				cursor.execute(query, data)
-				conn.commit()				
 				
+				try:				
+					query =	 "INSERT INTO iface_data (data, module_number, user_login_id, datetime, pid) VALUES (%s, %s, %s, %s, %s);"
+					data = (temperature, 1, 1, datetime.datetime.now(), pid)
+					cursor = conn.cursor()
+					cursor.execute(query, data)
+					conn.commit()				
+				except:
+					write_log('Unable to save to db (modbus)\n')		
 				
 				cursor.execute("SELECT archiving FROM iface_modbussettings WHERE user_login_id = 1")
 				state = cursor.fetchall()
 				
-				if False in state[0]: break							
+				if False in state[0]: 
+					write_log('Stop modbus \n')				
+					break		
+					
 						#exit(0)				
 				
 				time.sleep(1)
 		
-		start_daemon()
+		watch_daemon()
 						
 
 						
@@ -67,19 +79,25 @@ def check_pid(pid):
 	else:
 		return True				
 
-def start_daemon():
+def watch_daemon():
 
-	conn = psycopg2.connect("dbname='client' user='postgres2' host='localhost' password='1234'")
-	cursor = conn.cursor()						
+	write_log('Watch \n')
+	
+	try:
+		conn = psycopg2.connect("dbname='client' user='postgres2' host='localhost' password='1234'")
+		cursor = conn.cursor()						
+	except:
+		write_log('Unable to connect to db (watch state) \n')
 	
 	while True:										
 		
-		cursor.execute("SELECT archiving FROM iface_modbussettings WHERE user_login_id = 1")
-		state = cursor.fetchall()
-		#print(state)
-			
-		if True in state[0]:								
-																			
+		try:
+			cursor.execute("SELECT archiving FROM iface_modbussettings WHERE user_login_id = 1")
+			state = cursor.fetchall()
+		except:
+			write_log('Unable to query data (watch state) \n')
+					
+		if True in state[0]:																			
 				mini_modbus()
 
 		time.sleep(1)			
@@ -89,19 +107,22 @@ if __name__ == "__main__":
 						
 		if len(sys.argv) == 2:
 				if 'start' == sys.argv[1]:
+				
+						write_log('First start \n')
 						
 						with daemon.DaemonContext():
-							start_daemon()						
+								watch_daemon()						
 						
 						
-				elif 'stop' == sys.argv[1]:
+				# elif 'stop' == sys.argv[1]:
 				
-						f = open('/home/roman/pid.log', 'r+')
-						pid = int(f.readline())				  
-						f.close()
-						os.kill(pid, signal.SIGTERM)
+						# f = open('/home/roman/pid.log', 'r+')
+						# pid = int(f.readline())				  
+						# f.close()
+						# os.kill(pid, signal.SIGTERM)
 
 		# else:
 				# print "usage: %s start|stop" % sys.argv[0]
 				# sys.exit(2)
-				
+
+
