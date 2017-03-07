@@ -58,55 +58,8 @@ def mini_modbus():
 				cursor.execute("SELECT archiving FROM iface_modbussettings WHERE user_login_id = 1")
 				state = cursor.fetchall()
 				
-				if False in state[0]: 
-					write_log('Stop modbus \n')				
-					break		
-					
-						#exit(0)				
-				
-				time.sleep(1)
-		
-		watch_daemon()
-						
+				time.sleep(1)		
 
-						
-def check_pid(pid):		   
-	""" Check For the existence of a unix pid. """
-	try:
-		os.kill(pid, 0)
-	except OSError:
-		return False
-	else:
-		return True				
-
-def watch_daemon():
-
-	write_log('Watch \n')
-	
-	try:
-		conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
-		cursor = conn.cursor()						
-	except:
-		write_log('Unable to connect to db (watch state) \n')
-	
-	
-	
-	while True:										
-		
-		try:
-			cursor.execute("SELECT archiving FROM iface_modbussettings WHERE user_login_id = 1")
-			state = cursor.fetchall()
-			
-			if True in state[0]:																			
-				mini_modbus()
-		except:
-			write_log('Unable to query data (watch state) \n')
-					
-
-
-		time.sleep(1)			
-
-						
 if __name__ == "__main__":
 						
 		if len(sys.argv) == 2:
@@ -115,8 +68,7 @@ if __name__ == "__main__":
 						write_log('First start \n')
 						
 						with daemon.DaemonContext():
-								watch_daemon()						
-						
+								mini_modbus()		
 						
 				# elif 'stop' == sys.argv[1]:
 				

@@ -60,5 +60,6 @@ class Data(models.Model):
 	datetime = models.DateTimeField(auto_now_add=True, null=True)
 	module_number = models.IntegerField(null=True)
 	pid = models.IntegerField(null=True)
+	num_reg = models.IntegerField(null=True)
 	
 	
