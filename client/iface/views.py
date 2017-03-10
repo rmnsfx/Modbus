@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context, RequestContext
 from django.shortcuts import render_to_response
 from .form import *
@@ -12,14 +12,17 @@ import time
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 import itertools
+from datetime import date
 
 
 def main (request):
 
-		
-	array = Data.objects.values_list('data', flat=True).order_by('-data')[:100][::-1]
+	#array = Data.objects.filter(num_reg=4).values_list('data', flat=True)		
+	array = Data.objects.filter( num_reg=4, datetime__gt = date.today() ).values_list('data', flat=True)		
+	
+	#array = Data.objects.values_list('data', flat=True).order_by('-data')[:100][::-1]
 	array = list(array)
-	time_value = Data.objects.values_list('datetime', flat=True).order_by('-datetime')[:100][::-1]
+	time_value = Data.objects.values_list('datetime', flat=True)
 	time_value = list(time_value)
 	
 	time_data =	 json.dumps(time_value, cls=DatetimeEncoder)
@@ -139,6 +142,7 @@ def conf (request):
 def data (request):
 
 	return render_to_response('iface/data.html')
+	#return HttpResponseRedirect("")
 	
 	
 class DatetimeEncoder(json.JSONEncoder):

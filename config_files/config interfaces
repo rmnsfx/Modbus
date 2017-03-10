@@ -1,0 +1,56 @@
+Raspberry PI – Configure Static IP with /etc/network/interfaces or dhcpcd
+7. MARCH 2016 ZARSEN93 COMMENTS
+[Update] Changed order of the solutions due to comments. Added warning to solution 2.[/Update]
+
+[A simple solution for Wifi can be found here.]
+
+Problem
+
+In the default config the Raspberry PI 3 is configured using Wifi and DHCP (Jessie)
+If you want to use wired ethernet with a static IP config, you have to reconfigure
+
+
+Solution 1 – dhcpcd
+
+Open dhcpcd.conf
+sudo nano /etc/dhcpcd.conf
+A valid config would look like this:
+
+ interface eth0
+static ip_address=192.168.2.77/24
+static routers=192.168.2.1
+static domain_name_servers=192.168.2.1
+Restart networking and the work is done:
+
+sudo service networking restart
+
+--------------------------------------------------------------------------------------------------------------
+
+
+Solution 2 – /etc/networking/interfaces (get rid of the dhcpcd service)
+
+Warning: This solution is only useful, if you do not depend on dhcpcd, e.g. in a wired static IP environment.
+
+Open the interfaces file with
+
+sudo nano /etc/network/interfaces
+A correct config would look like this:
+
+auto eth0
+allow-hotplug eth0
+iface eth0 inet static
+address 192.168.2.77
+netmask 255.255.255.0
+gateway 192.168.2.1
+dns-nameservers 192.168.2.1
+Now you have to stop and disable dhcpcd, because it will make your config useless:
+
+sudo service dhcpcd stop
+
+sudo systemctl disable dhcpcd
+Restart networking and the work is done:
+
+sudo service networking restart
+
+----------------------------------------------------------------------------------------------------------------
+Fin

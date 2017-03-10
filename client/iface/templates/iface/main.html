@@ -45,7 +45,7 @@ $('#chart_container').highcharts({
         },
         yAxis: {
             title: {
-                text: 'Temperature (°C)'
+                text: 'Data'
             }
         },
         plotOptions: {
@@ -57,7 +57,7 @@ $('#chart_container').highcharts({
             }
         },
         series: [{
-            name: 'Tokyo',            
+            //name: 'Tokyo',            
 			data: {{ array | safe }}
         }, {
             //name: 'London',
