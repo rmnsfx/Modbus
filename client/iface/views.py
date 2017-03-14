@@ -18,17 +18,40 @@ from datetime import date
 def main (request):
 
 	#array = Data.objects.filter(num_reg=4).values_list('data', flat=True)		
-	array = Data.objects.filter( num_reg=1, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg1 = Data.objects.filter( num_reg=1, datetime__gt = date.today() ).values_list('data', flat=True)			
 	#array = Data.objects.values_list('data', flat=True).order_by('-data')[:100][::-1]
-	array = list(array)
+	reg1 = list(reg1)
 	
 	#time_value = Data.objects.values_list('datetime', flat=True)
 	time_value = Data.objects.filter( num_reg=1, datetime__gt = date.today() ).values_list('datetime', flat=True)
-	time_value = list(time_value)
-	
+	time_value = list(time_value)	
 	time_data =	 json.dumps(time_value, cls=DatetimeEncoder)
 	
-	return render(request, 'iface/main.html', {'array': array, 'time': time_data})
+	
+	
+	reg2 = Data.objects.filter( num_reg=2, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg3 = Data.objects.filter( num_reg=3, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg4 = Data.objects.filter( num_reg=4, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg5 = Data.objects.filter( num_reg=5, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg6 = Data.objects.filter( num_reg=6, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg7 = Data.objects.filter( num_reg=7, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg8 = Data.objects.filter( num_reg=8, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg9 = Data.objects.filter( num_reg=9, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg10 = Data.objects.filter( num_reg=10, datetime__gt = date.today() ).values_list('data', flat=True)			
+	reg11 = Data.objects.filter( num_reg=11, datetime__gt = date.today() ).values_list('data', flat=True)			
+	
+	reg2 = list(reg2)
+	reg3 = list(reg3)
+	reg4 = list(reg4)
+	reg5 = list(reg5)
+	reg6 = list(reg6)
+	reg7 = list(reg7)
+	reg8 = list(reg8)
+	reg9 = list(reg9)
+	reg10 = list(reg10)
+	reg11 = list(reg11)	
+	
+	return render(request, 'iface/main.html', {'reg1': reg1, 'time': time_data, 'reg2': reg2, 'reg3': reg3, 'reg4': reg4, 'reg5': reg5,'reg6': reg6,'reg7': reg7,'reg8': reg8,'reg9': reg9,'reg10': reg10,'reg11': reg11})
 
 def conf (request):
 			

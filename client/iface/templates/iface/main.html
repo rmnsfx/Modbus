@@ -59,14 +59,53 @@ $('#chart_container').highcharts({
             }
 			
         },
-        series: [{
-            			
-			//name: 'Tokyo',            
-			data: {{ array | safe }}				
-									
-        }, {
-            //name: 'London',
-            //data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        series: [
+			{     			
+				name: 'Reg 1',            
+				data: {{ reg1 | safe }}        
+			}, 
+			{
+				name: 'Reg 2',            
+				//data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+				
+				data: {{ reg2 | safe }}
+			},
+			{
+				name: 'Reg 3',            
+				data: {{ reg3 | safe }}
+			},
+			{
+				name: 'Reg 4',            
+				data: {{ reg4 | safe }}
+			},
+			{
+				name: 'Reg 5',            
+				data: {{ reg5 | safe }}
+			},
+			{
+				name: 'Reg 6',            
+				data: {{ reg6 | safe }}
+			},
+			{
+				name: 'Reg 7',            
+				data: {{ reg7 | safe }}
+			},
+			{
+				name: 'Reg 8',            
+				data: {{ reg8 | safe }}
+			},
+			{
+				name: 'Reg 9',            
+				data: {{ reg9 | safe }}
+			},
+			{
+				name: 'Reg 10',            
+				data: {{ reg10 | safe }}
+			},
+			{
+				name: 'Reg 11',            
+				data: {{ reg11 | safe }}			
+			
         }]
     });
 });

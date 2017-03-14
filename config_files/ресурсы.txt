@@ -31,6 +31,8 @@ CREATE DATABASE client;
 CREATE USER roman WITH password '1234';
 GRANT ALL privileges ON DATABASE client TO roman;
 
+sudo /etc/init.d/postgresql start
+
 
 sudo dpkg-reconfigure tzdata
 sudo ntpdate -bs ntp.remco.org
