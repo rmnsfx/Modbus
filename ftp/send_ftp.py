@@ -12,6 +12,8 @@ import psycopg2
 import datetime
 import ftplib
 import csv
+import pandas as pd
+import numpy as np
 
 last_datetime = None
 
@@ -46,13 +48,18 @@ def modbus_data():
 			# for row in cursor:
 				# print>>f, row[0]		
 
-			cursor.execute("SELECT * FROM iface_data WHERE (datetime >= now()::date - INTERVAL '12 HOUR')")
-			result = cursor.fetchall()
+			#cursor.execute("SELECT datetime, data, num_reg FROM iface_data WHERE (datetime >= now()::date - INTERVAL '12 HOUR')")					
+			#result = cursor.fetchall()
+			#f = open("/home/roman/data/data.csv","wb")
+			#c = csv.writer(f)
+			#c.writerows(result)			
+			#f.close()
 			
-			f = open("/home/roman/data/data.csv","wb")
-			c = csv.writer(f)
-			c.writerows(result)			
-			f.close()
+			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '2 hour'", conn)						
+			df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')
+									
+			df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')			
+			
 			conn.close()
 			
 			return True
@@ -107,9 +114,7 @@ def send_log():
 				
 				
 if __name__ == "__main__":		
-			
-		#time.sleep(3600)
-		
+						
 		
 		while True:			
 			
@@ -119,9 +124,9 @@ if __name__ == "__main__":
 				
 				while send_state is False:
 					
-					if send_ftp('/home/roman/data/', 'data.csv') is True:			
-						#time.sleep(600)
-						time.sleep(3600) #12 часов
+					if send_ftp('/home/roman/data/', 'data.csv') is True:
+						
+						time.sleep(60 * 60 * 2) #2 часа						
 						send_state = True		
 					
 					else:

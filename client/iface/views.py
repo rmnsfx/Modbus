@@ -18,11 +18,12 @@ from datetime import date
 def main (request):
 
 	#array = Data.objects.filter(num_reg=4).values_list('data', flat=True)		
-	array = Data.objects.filter( num_reg=4, datetime__gt = date.today() ).values_list('data', flat=True)		
-	
+	array = Data.objects.filter( num_reg=1, datetime__gt = date.today() ).values_list('data', flat=True)			
 	#array = Data.objects.values_list('data', flat=True).order_by('-data')[:100][::-1]
 	array = list(array)
-	time_value = Data.objects.values_list('datetime', flat=True)
+	
+	#time_value = Data.objects.values_list('datetime', flat=True)
+	time_value = Data.objects.filter( num_reg=1, datetime__gt = date.today() ).values_list('datetime', flat=True)
 	time_value = list(time_value)
 	
 	time_data =	 json.dumps(time_value, cls=DatetimeEncoder)

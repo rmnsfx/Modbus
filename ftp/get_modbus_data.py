@@ -53,7 +53,7 @@ def save_modbus():
 				try:				
 					query =	 "INSERT INTO iface_data (data, datetime, num_reg, user_login_id) VALUES (%s, %s, %s, %s);"
 					
-					data1 = (r_data1, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 1, 1)
+					data1 = (r_data1, datetime.datetime.now().strftime("%Y-%m- %H:%M:%S"), 1, 1)
 					data2 = (r_data2, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 2, 1)
 					data3 = (r_data3, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 3, 1)
 					data4 = (r_data4, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 4, 1)

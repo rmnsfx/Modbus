@@ -1,0 +1,9 @@
+# /etc/udev/rules.d/88-usb-serial.rules
+# udevadm control --reload-rules
+
+#Список параметров USB устройства
+#udevadm info -a -p  $(udevadm info -q path -n /dev/ttyUSB3) 
+
+#Привязываем  USB/RS-485 к ttyUSB3
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE="0777", KERNEL=="ttyUSB*", NAME="ttyUSB3"
+
