@@ -1,12 +1,12 @@
 0. Raspbian, Armbian (with Win32DiskImager)
-1. Django
+1. sudo pip install Django
 2. Nginx
 3. uWSGI
 4. Postgresql
 5. Python-pip, Python3-pip
-6. minimalmodbus
-7. pyserial
-8. python-daemon
+6. sudo pip install minimalmodbus
+7. python-daemon
+8. OpenVPN
 
 9. sudo apt-get install python-psycopg2 (postgresql)
 10. sudo apt-get install libpq-dev (postgresql)
@@ -15,17 +15,22 @@
 13. sudo apt-get install wvdial (для 3g модема), wvdialconf (`/etc/wvdial.conf') (https://www.opennet.ru/tips/info/2609.shtml)
 14. sudo apt-get install python-psutil (проверка запущен ли процесс)
 
-15. OpenVPN
+15. sudo apt-get install supervisor
+16. sudo apt-get install ntp ntpdate ntp-server (синхронизация времени)
+17. sudo apt-get install htop
+18. sudo apt-get install python-pandas
 
 
 
-
-
-
-
+sudo raspi-config
+Enable SSH, Serial.
 
 
 sudo -u postgres psql
 CREATE DATABASE client;
-CREATE USER postgres WITH password '1234';
+CREATE USER roman WITH password '1234';
 GRANT ALL privileges ON DATABASE client TO roman;
+
+
+sudo dpkg-reconfigure tzdata
+sudo ntpdate -bs ntp.remco.org
