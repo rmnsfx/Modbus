@@ -23,7 +23,8 @@
 
 
 sudo raspi-config
-Enable SSH, Serial.
+Enable SSH, 
+Serial disable "login shell to be access over serial".
 
 
 sudo -u postgres psql

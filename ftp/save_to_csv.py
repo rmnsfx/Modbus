@@ -55,7 +55,7 @@ def modbus_data():
 			#c.writerows(result)			
 			#f.close()
 			
-			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '1 hour'", conn)						
+			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '24 hour'", conn)						
 			df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')
 									
 			df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')			
@@ -116,29 +116,7 @@ def send_log():
 if __name__ == "__main__":		
 						
 		
-		while True:			
-			
-			if modbus_data() is True:				
-			
-				send_state = False				
-				
-				while send_state is False:
-					
-					if send_ftp('/home/roman/data/', 'data.csv') is True:
-						
-						time.sleep(60 * 60 * 1) #1 час						
-						send_state = True		
-					
-					else:
-				
-						time.sleep(60)
-						
-					
-					
-				
-			else:
-				
-				time.sleep(5)
+		print(modbus_data())
 				
 		
 				
