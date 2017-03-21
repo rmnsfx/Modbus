@@ -16,6 +16,7 @@ from sqlalchemy import create_engine
 import threading
 from collections import namedtuple
 
+
 class Data:
 	pass
 
@@ -28,24 +29,14 @@ def write_log(mes):
 		f.close()
 
 def save_modbus():
-
-
 		
+		buffer_size = 100
 		counter = 0
-		dev_port = 0
-		file_name = '/home/roman/data/data.csv'
-		data_list = []
-		
+		dev_port = 0		
+		data_list = []		
 		Point = namedtuple('Point', ['datetime', 'num_reg', 'value'])
 		
-		while counter < 2:	
-			
-				
-		
-			# with open(file_name, 'w') as f:
-				# writer = csv.writer(f, delimiter = ';')		
-			
-				# while counter < 100:
+		while True:	
 			
 				try:
 					if dev_port == 0:
@@ -68,76 +59,91 @@ def save_modbus():
 					if dev_port > 5: dev_port = 0					
 				
 
-				#try:
-																		
-				date = datetime.datetime.now()	
-				
-				# writer.writerow([date, all_data[0], all_data[1], all_data[2], all_data[3], all_data[4], all_data[5], all_data[6], all_data[7], all_data[8], all_data[9], all_data[10] ])
-				
+				try:																		
+					date = datetime.datetime.now()	
 								
-				for idx, i in enumerate(all_data):							
-					data_list.append(Point(date, idx, i))	
+					for idx, i in enumerate(all_data):							
+						data_list.append(Point(date, idx, i))	
+						
+				except:				
+					write_log('Unable append namedtuple to list (modbus)\n')
+				
+				
+				
+				if counter >= buffer_size:						
+				
+					#start_time = time.time()
+				
+					counter = 0				
+					threads = [] 
+					fork = True
+					
+					try: pid = os.fork()
+					
+					except:
+						write_log( "Ошибка создания дочернего процесса" )
+						fork = False
+						
+					else:
+						if pid == 0 : # дочерний процесс
+							copyto_db(data_list)
+							
+							sys.exit( 0 )
+							
+						if pid > 0 :  # родительский процесс
+							#os.wait()							
+							signal.signal(signal.SIGCHLD,signal.SIG_IGN) # игнорируем зомби 
+							
+					
+					#Реинициализация списка
+					data_list = None
+					data_list = []
+				
+					#end_time = time.time()					
+					#print (end_time - start_time)	
+				
+				else:
+					time.sleep(0.09)
+				
 				
 				counter += 1
 					
-					#t = threading.Thread(target=copyto_db)						
-					#t.start()
-					
-				#print(counter)
-						
-				#except:				
-					#write_log('Unable to save to db (modbus)\n')	
-					
-			
-				time.sleep(0.09)
-				#f.close()
-			
-				#if counter >= 10:									
-					#counter = 0
-					# t = threading.Thread(target=copyto_db)						
-					# t.start()
-		for g in data_list:
-			print(g.datetime, g.num_reg, g.value)
 				
-def copyto_db():
+def copyto_db(data):
 
-		#a = None
+		labels = ['datetime', 'num_reg', 'data']
 
-		#try:			
+		try:
+			engine = create_engine('postgresql://roman:1234@localhost:5432/client')					
 			
-			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
-			cursor = conn.cursor()
-			engine = create_engine('postgresql://roman:1234@localhost:5432/client')		
+			df = pd.DataFrame.from_records(data, columns=labels)
+			df.to_sql('iface_data', engine, if_exists='append', index=False)
+		
+		except:						
+			write_log('Unable save to db \n')	
+		
+		sys.exit( 0 )
+		
+		#else:				
+			#df = pd.read_csv('/home/roman/data/new_data.csv', header=None)
+			#df = pd.read_csv('/home/roman/data/data.csv', sep=';', names = ["datetime", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])						   
+			#df = pd.melt(df.reset_index(), id_vars=['datetime'], var_name=['num_reg'], value_name='data')			
+			#df = df[df.num_reg != 'index'] #убираем строки с появившимся index
+			
+			#conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
+			#cursor = conn.cursor()
 			
 			#with open('/home/roman/data/new_data.csv') as f:
 				#cursor.copy_expert("COPY iface_data(data, datetime, user_login_id, num_reg) FROM STDIN WITH CSV DELIMITER ';'", f)
 			
 			#conn.commit()
-			#cursor.close()
+			#cursor.close()			
 		
-		#except:
-						
-			#write_log('Unable to connect \n')	
-		
-		#else:	
+		#finally:			
+			# conn.close()				
 			
-			#df = pd.read_csv('/home/roman/data/new_data.csv', header=None)
-			df = pd.read_csv('/home/roman/data/data.csv', sep=';', names = ["datetime", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])				
-			
-			   
-			df = pd.melt(df.reset_index(), id_vars=['datetime'], var_name=['num_reg'], value_name='data')			
-			df = df[df.num_reg != 'index'] #убираем строки с появившимся index
-			df.to_sql('iface_data', engine, if_exists='append', index=False)
-			
-			print(df)
-		
-		#finally:
-			
-			conn.close()	
-		
-			
-			
-		
+		# for i in data:
+			# print(i.datetime, i.num_reg, i.value)
 		
 		
 		
