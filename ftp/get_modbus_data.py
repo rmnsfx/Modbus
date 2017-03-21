@@ -10,7 +10,14 @@ from multiprocessing import Process
 import minimalmodbus
 import psycopg2
 import datetime
+import csv
+import pandas as pd
+from sqlalchemy import create_engine
+import threading
+from collections import namedtuple
 
+class Data:
+	pass
 
 def write_log(mes):				
 		#f = open('/var/log/daemon_modbus.log', 'w+')
@@ -24,90 +31,119 @@ def save_modbus():
 
 
 		
-		conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
-		cursor = conn.cursor()
-		query =	 "INSERT INTO iface_data (data, datetime, num_reg, user_login_id) VALUES (%s, %s, %s, %s);"
-
+		counter = 0
+		dev_port = 0
+		file_name = '/home/roman/data/data.csv'
+		data_list = []
+		
+		Point = namedtuple('Point', ['datetime', 'num_reg', 'value'])
+		
+		while counter < 2:	
 			
+				
 		
-		# write_log('Unable to connect to the database (modbus) \n')
-		# conn = None
-		
-		i=0
-		
-		while i != 100:			
-
-
-		
-						
-			r_data1 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.5, 0000, 0, 4, False)
-			# r_data2 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0001, 0, 4, False)
-			# r_data3 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0002, 0, 4, False)
-			# r_data4 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0003, 0, 4, False)
-			# r_data5 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0004, 0, 4, False)
-			# r_data6 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0005, 0, 4, False)
-			# r_data7 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0006, 0, 4, False)
-			# r_data8 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0007, 0, 4, False)
-			# r_data9 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0010, 0, 4, False)
-			# r_data10 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0011, 0, 4, False)
-			# r_data11 = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.1, 0012, 0, 4, False)
+			# with open(file_name, 'w') as f:
+				# writer = csv.writer(f, delimiter = ';')		
 			
-			#print(minimalmodbus._twoByteStringToNum(r_data1, 1, False))
-			#print(minimalmodbus._hexencode(r_data1, False))
-			print(r_data1)
+				# while counter < 100:
+			
+				try:
+					if dev_port == 0:
+						all_data = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.5, 0000, 11, 4)			
+					if dev_port == 1:
+						all_data = template_modbus('/dev/ttyUSB1', 1, 115200, 8, 1, 0.5, 0000, 11, 4)			
+					if dev_port == 2:
+						all_data = template_modbus('/dev/ttyUSB2', 1, 115200, 8, 1, 0.5, 0000, 11, 4)			
+					if dev_port == 3:
+						all_data = template_modbus('/dev/ttyUSB3', 1, 115200, 8, 1, 0.5, 0000, 11, 4)			
+					if dev_port == 4:
+						all_data = template_modbus('/dev/ttyUSB4', 1, 115200, 8, 1, 0.5, 0000, 11, 4)	
+					if dev_port == 5:
+						all_data = template_modbus('/dev/ttyUSB5', 1, 115200, 8, 1, 0.5, 0000, 11, 4)	
 										
+				except:
+					write_log('Unable connect to modbus\n')			
+					
+					dev_port += 1				
+					if dev_port > 5: dev_port = 0					
 				
-							
-				
-				
-			data1 = (r_data1, datetime.datetime.now(), 1, 1)
-				# data2 = (r_data2, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 2, 1)
-				# data3 = (r_data3, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 3, 1)
-				# data4 = (r_data4, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 4, 1)
-				# data5 = (r_data5, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 5, 1)
-				# data6 = (r_data6, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 6, 1)
-				# data7 = (r_data7, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 7, 1)
-				# data8 = (r_data8, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 8, 1)
-				# data9 = (r_data9, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 9, 1)
-				# data10 = (r_data10, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 10, 1)
-				# data11 = (r_data11, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 11, 1)
-				
-				
-				
-			cursor.execute(query, data1)					
-				# cursor.execute(query, data2)					
-				# cursor.execute(query, data3)					
-				# cursor.execute(query, data4)					
-				# cursor.execute(query, data5)					
-				# cursor.execute(query, data6)					
-				# cursor.execute(query, data7)
-				# cursor.execute(query, data8)
-				# cursor.execute(query, data9)
-				# cursor.execute(query, data10)
-				# cursor.execute(query, data11)
-				
-				#returnStr1 = cursor.statusmessage
-				
-						
-			#except:
-				
-				#write_log('Unable to save to db (modbus)\n')
 
-			#conn.commit()			
+				#try:
+																		
+				date = datetime.datetime.now()	
+				
+				# writer.writerow([date, all_data[0], all_data[1], all_data[2], all_data[3], all_data[4], all_data[5], all_data[6], all_data[7], all_data[8], all_data[9], all_data[10] ])
+				
+								
+				for idx, i in enumerate(all_data):							
+					data_list.append(Point(date, idx, i))	
+				
+				counter += 1
+					
+					#t = threading.Thread(target=copyto_db)						
+					#t.start()
+					
+				#print(counter)
+						
+				#except:				
+					#write_log('Unable to save to db (modbus)\n')	
+					
+			
+				time.sleep(0.09)
+				#f.close()
+			
+				#if counter >= 10:									
+					#counter = 0
+					# t = threading.Thread(target=copyto_db)						
+					# t.start()
+		for g in data_list:
+			print(g.datetime, g.num_reg, g.value)
+				
+def copyto_db():
+
+		#a = None
+
+		#try:			
+			
+			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
+			cursor = conn.cursor()
+			engine = create_engine('postgresql://roman:1234@localhost:5432/client')		
+			
+			#with open('/home/roman/data/new_data.csv') as f:
+				#cursor.copy_expert("COPY iface_data(data, datetime, user_login_id, num_reg) FROM STDIN WITH CSV DELIMITER ';'", f)
+			
+			#conn.commit()
 			#cursor.close()
-			#conn.close()
+		
+		#except:
+						
+			#write_log('Unable to connect \n')	
+		
+		#else:	
 			
-			i = i+1
+			#df = pd.read_csv('/home/roman/data/new_data.csv', header=None)
+			df = pd.read_csv('/home/roman/data/data.csv', sep=';', names = ["datetime", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])				
 			
-			time.sleep(0.09)		
+			   
+			df = pd.melt(df.reset_index(), id_vars=['datetime'], var_name=['num_reg'], value_name='data')			
+			df = df[df.num_reg != 'index'] #убираем строки с появившимся index
+			df.to_sql('iface_data', engine, if_exists='append', index=False)
+			
+			print(df)
+		
+		#finally:
+			
+			conn.close()	
+		
+			
 			
 		
-		cursor.close()
-		conn.close()
-			
-			
+		
+		
+		
+		
 				
-def template_modbus(tty, addr, baudrate, bytesize, stopbits, timeout, num_reg, value, functioncode, signed):
+def template_modbus(tty, addr, baudrate, bytesize, stopbits, timeout, num_reg, qty, functioncode):
 
 		instrument = minimalmodbus.Instrument(tty, addr)						
 		instrument.serial.baudrate = baudrate	  # Baud
@@ -117,17 +153,18 @@ def template_modbus(tty, addr, baudrate, bytesize, stopbits, timeout, num_reg, v
 		instrument.serial.timeout  = timeout	# seconds (50 ms)					
 		#instrument.address		# this is the slave address number
 		instrument.mode = minimalmodbus.MODE_RTU   # rtu or ascii mode			
-		data = instrument.read_register(num_reg, value, functioncode, signed)			
+		all_data = instrument.read_registers(num_reg, qty, functioncode)			
 		#data = instrument.read_register(num_reg, value, functioncode, signed)	
-		#data = instrument.read_register(0000, 0, 4)
-		
+		#data = instrument.read_register(0000, 0, 4)		
 		
 				
-		return data
+		return all_data
 				
 
 if __name__ == "__main__":		
 			
 		save_modbus()
+		
+		
 
 

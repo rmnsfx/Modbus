@@ -19,6 +19,7 @@
 16. sudo apt-get install ntp ntpdate ntp-server (синхронизация времени)
 17. sudo apt-get install htop
 18. sudo apt-get install python-pandas
+19. sudo pip install sqlalchemy
 
 
 

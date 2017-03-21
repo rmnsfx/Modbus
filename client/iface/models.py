@@ -54,12 +54,14 @@ class ModbusSettings(models.Model):
 	
 class Data(models.Model):
 
-	id_Data = models.AutoField(primary_key=True)
-	user_login = models.ForeignKey(MainSettings, default=0)
-	data = models.IntegerField(null=True)
+	
 	datetime = models.DateTimeField(auto_now_add=True, null=True)
+	data = models.IntegerField(null=True)
+	num_reg = models.IntegerField(null=True)
+	user_login = models.ForeignKey(MainSettings, default=0)	
+	id_data = models.AutoField(primary_key=True)
 	#module_number = models.IntegerField(null=True)
 	#pid = models.IntegerField(null=True)
-	num_reg = models.IntegerField(null=True)
+	
 	
 	
