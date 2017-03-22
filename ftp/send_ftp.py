@@ -14,6 +14,9 @@ import ftplib
 import csv
 import pandas as pd
 import numpy as np
+import serial
+import threading
+from usb.core import find as finddev
 
 last_datetime = None
 
@@ -25,8 +28,7 @@ def write_log(mes):
 		f.write(str(mes))				 
 		f.close()
 
-def modbus_data():
-			
+def modbus_data():			
 				
 		result = None
 		
@@ -111,6 +113,37 @@ def send_log():
 		except:
 		
 			write_log('Unable upload log to ftp\n')			
+
+def modem(state):
+
+		if state == 'start':			
+			os.system('sudo wvdial &')
+			
+		if state == 'stop':
+			os.system("sudo killall -9 wvdial &")
+			
+		if state == 'reboot':
+			mod=serial.Serial("/dev/ttyUSB0",115200,timeout=5)
+			mod.write("AT+CFUN=1,1\r")
+			mod.close()	
+			
+		if state == 'reset':
+			dev = finddev(idVendor=0x12d1)
+			dev.reset()	
+		
+
+def check_ping():
+	
+	hostname = "8.8.8.8"
+	response = os.system("ping -c 1 " + hostname)
+	
+	# and then check the response...
+	if response == 0:
+		pingstatus = True
+	else:
+		pingstatus = False
+
+	return pingstatus
 				
 				
 if __name__ == "__main__":		
@@ -118,27 +151,46 @@ if __name__ == "__main__":
 		
 		while True:			
 			
-			if modbus_data() is True:				
-			
-				send_state = False				
+			# if modbus_data() is True:				
 				
-				while send_state is False:
+				# modem_ready = False
+				# send_state = False	
+				
+				# while modem_ready is False:
 					
-					if send_ftp('/home/roman/data/', 'data.csv') is True:
+					print('startttttttt')
+					modem('start')	
+					time.sleep(30)
+					print(check_ping())
+					
+					# if check_ping() is True:
+					
+						# while send_state is False:
+							
+							# if send_ftp('/home/roman/data/', 'data.csv') is True:
+								
+								# time.sleep(60 * 60 * 1) #1 час						
+								# send_state = True		
+							
+							# else:
 						
-						time.sleep(60 * 60 * 1) #1 час						
-						send_state = True		
-					
-					else:
-				
-						time.sleep(60)
+								# time.sleep(60)
 						
-					
+						# modem_ready = True
+						
+					# else:
+					time.sleep(1)	
+					print('stopppppppppppppp')
+					modem('stop')
+					time.sleep(1)	
+					print('rebootttttttttttt')
+					time.sleep(1)	
+					modem('reset')
 					
 				
-			else:
+			#else:
 				
-				time.sleep(5)
+					time.sleep(5)
 				
 		
 				
