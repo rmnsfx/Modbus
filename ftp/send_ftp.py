@@ -37,6 +37,7 @@ def modbus_data():
 			
 		except:
 			write_log('Unable to connect to the database (read_modbus_data) \n')
+			print('Unable to connect to the database (read_modbus_data) \n')
 			conn = None
 			conn.close()
 			return False
@@ -121,11 +122,12 @@ def modem(state):
 			
 		if state == 'stop':
 			os.system("sudo killall -9 wvdial &")
+			os.system("sudo killall -9 pppd &")
 			
-		if state == 'reboot':
-			mod=serial.Serial("/dev/ttyUSB0",115200,timeout=5)
-			mod.write("AT+CFUN=1,1\r")
-			mod.close()	
+		# if state == 'reboot':
+			# mod=serial.Serial("/dev/ttyUSB0",115200,timeout=5)
+			# mod.write("AT+CFUN=1,1\r")
+			# mod.close()	
 			
 		if state == 'reset':
 			dev = finddev(idVendor=0x12d1)
@@ -148,49 +150,58 @@ def check_ping():
 				
 if __name__ == "__main__":		
 						
-		
-		while True:			
-			
-			# if modbus_data() is True:				
 				
-				# modem_ready = False
-				# send_state = False	
+			while True:			
 				
-				# while modem_ready is False:
-					
-					print('startttttttt')
-					modem('start')	
-					time.sleep(30)
-					print(check_ping())
-					
-					# if check_ping() is True:
-					
-						# while send_state is False:
+				try:
+				
+					if modbus_data() is True:				
+											
+						send_state = False						
+						modem_ready = False
+						
+						while modem_ready is False:	
+						
+							#modem('start')						
+							time.sleep(30)						
 							
-							# if send_ftp('/home/roman/data/', 'data.csv') is True:
+							if check_ping() is True:								
+							
+								modem_ready = True
+								send_counter = 0
 								
-								# time.sleep(60 * 60 * 1) #1 час						
-								# send_state = True		
-							
-							# else:
+								while send_state is False:
+																								
+									if send_ftp('/home/roman/data/', 'data.csv') is True:
+										
+										#print('Send ftp ok!\n')																	
+										#modem('stop')			
+										time.sleep(60 * 1 * 1) #1 час						
+										send_state = True	
+										os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )										
+									
+									else:						
+										write_log('Error send ftp in while \n')	
+										time.sleep(60)						
+									
+									if send_counter > 5: 
+										write_log('Try send but connection is off \n')
+										send_counter = 0
+										#modem('stop')	
+										#time.sleep(1)	
+										#modem('reset')	
+										#modem('start')
+									
+									send_counter += 1
+									
+							else:
+								write_log('Error start modem (ftp)\n')	
+								#modem('stop')									
+								#modem('reset')	
 						
-								# time.sleep(60)
-						
-						# modem_ready = True
-						
-					# else:
-					time.sleep(1)	
-					print('stopppppppppppppp')
-					modem('stop')
-					time.sleep(1)	
-					print('rebootttttttttttt')
-					time.sleep(1)	
-					modem('reset')
-					
+									
+				except:
 				
-			#else:
-				
+					write_log('Error get modbus data (ftp)\n')	
+					os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )
 					time.sleep(5)
-				
-		
-				

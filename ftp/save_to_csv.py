@@ -55,7 +55,7 @@ def modbus_data():
 			#c.writerows(result)			
 			#f.close()
 			
-			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '1 hour'", conn)						
+			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '6 hour'", conn)						
 			df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')
 									
 			df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')			

@@ -1,6 +1,0 @@
-# /etc/udev/rules.d/50-local.rules
-
-# /dev/ttyUSB0
-#SUBSYSTEMS=="usb", ATTRS{manufacturer}=="Generic", ATTRS{product}=="USB to Serial Converter", ATTRS{serial}=="OCBPJ9HM", KERNEL=="ttyUSB[0123]", SYMLINK+="powercom"
-
-SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", KERNEL=="ttyUSB[0123]", SYMLINK+="powercom"
