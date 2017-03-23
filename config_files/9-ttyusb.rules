@@ -1,0 +1,1 @@
+KERNEL=="ttyUSB[0-9]*", KERNELS=="1-1.4.5", SYMLINK+="megafon-modem"
