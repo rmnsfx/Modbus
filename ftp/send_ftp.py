@@ -30,20 +30,29 @@ def write_log(mes):
 
 def modbus_data():			
 				
-		result = None
+		#result = None
 		
 		try:
+		
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
+			cursor = conn.cursor()
+			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '1 hour'", conn)						
+			df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')									
+			df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')						
+			conn.close()
+			
+			return True
 			
 		except:
-			write_log('Unable to connect to the database (read_modbus_data) \n')
-			print('Unable to connect to the database (read_modbus_data) \n')
+			
+			write_log('Unable to connect to the database (modbus_data) \n')			
 			conn = None
 			conn.close()
+			
 			return False
 		
-		else:		
-			cursor = conn.cursor()
+		
+			
 			# cursor.execute("SELECT concat(data, ' ', datetime) FROM iface_data WHERE (datetime >= now()::date - INTERVAL '12 HOUR')", [num_reg])			
 						
 			# #os.makedirs(datetime.date.today().strftime("%Y/%m/%d"))
@@ -58,14 +67,9 @@ def modbus_data():
 			#c.writerows(result)			
 			#f.close()
 			
-			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '1 hour'", conn)						
-			df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')
-									
-			df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')			
+
 			
-			conn.close()
 			
-			return True
 		
 
 def send_ftp(path, name):
@@ -118,20 +122,28 @@ def send_log():
 def modem(state):
 
 		if state == 'start':			
-			os.system('sudo wvdial &')
+			# os.system('sudo wvdial &')
+			os.system('sudo /home/roman/modem3g/sakis3g connect APN="internet"')
+
 			
 		if state == 'stop':
-			os.system("sudo killall -9 wvdial &")
-			os.system("sudo killall -9 pppd &")
+			# os.system("sudo killall -9 wvdial &")
+			# os.system("sudo killall -9 pppd &")
+			os.system('sudo /home/roman/modem3g/sakis3g disconnect')
 			
 		# if state == 'reboot':
 			# mod=serial.Serial("/dev/ttyUSB0",115200,timeout=5)
 			# mod.write("AT+CFUN=1,1\r")
 			# mod.close()	
 			
-		if state == 'reset':
-			dev = finddev(idVendor=0x12d1)
-			dev.reset()	
+		# if state == 'AT':
+			# mod=serial.Serial("/dev/megafon-modem",9600,timeout=5)
+			# mod.write("AT+CFUN=1")
+			# mod.close()		
+			
+		#if state == 'reset':
+			# dev = finddev(idVendor=0x12d1)
+			# dev.reset()	
 		
 
 def check_ping():
@@ -153,7 +165,7 @@ if __name__ == "__main__":
 				
 			while True:			
 				
-				try:
+				#try:
 				
 					if modbus_data() is True:				
 											
@@ -162,46 +174,36 @@ if __name__ == "__main__":
 						
 						while modem_ready is False:	
 						
-							#modem('start')						
-							time.sleep(30)						
+							modem('start')		
+							time.sleep(30)
+							write_log('Modem start (ftp)\n')							
 							
 							if check_ping() is True:								
-							
+						
 								modem_ready = True
 								send_counter = 0
+								write_log('Ping ok (ftp)\n')
 								
 								while send_state is False:
 																								
 									if send_ftp('/home/roman/data/', 'data.csv') is True:
 										
-										#print('Send ftp ok!\n')																	
-										#modem('stop')			
+										write_log('Data send, go sleep (ftp)\n')	
+										modem('stop')										
 										time.sleep(60 * 1 * 1) #1 час						
 										send_state = True	
-										os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )										
+										#os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )										
 									
-									else:						
-										write_log('Error send ftp in while \n')	
-										time.sleep(60)						
-									
-									if send_counter > 5: 
-										write_log('Try send but connection is off \n')
-										send_counter = 0
-										#modem('stop')	
-										#time.sleep(1)	
-										#modem('reset')	
-										#modem('start')
-									
-									send_counter += 1
-									
+									else:																
+										time.sleep(60)			
+								
 							else:
-								write_log('Error start modem (ftp)\n')	
-								#modem('stop')									
-								#modem('reset')	
-						
+								write_log('No ping, error init modem (ftp)\n')	
+								modem('stop')																	
+								time.sleep(30)	
 									
-				except:
+				#except:
 				
-					write_log('Error get modbus data (ftp)\n')	
-					os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )
-					time.sleep(5)
+					#write_log('Error get modbus data (ftp)\n')	
+					#os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )
+					#time.sleep(5)

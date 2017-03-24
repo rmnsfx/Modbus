@@ -1,12 +1,13 @@
 0. Raspbian, Armbian (with Win32DiskImager)
+
 1. sudo pip install Django
-2. Nginx
-3. uWSGI
-4. Postgresql
-5. Python-pip, Python3-pip
+2. sudo apt-get install Nginx
+3. sudo apt-get install uWSGI
+4. sudo apt-get install Postgresql
+5. sudo apt-get install Python-pip, Python3-pip
 6. sudo pip install minimalmodbus
-7. python-daemon
-8. OpenVPN
+7. sudo apt-get install python-daemon
+8. sudo apt-get install OpenVPN
 
 9. sudo apt-get install python-psycopg2 (postgresql)
 10. sudo apt-get install libpq-dev (postgresql)
@@ -16,10 +17,11 @@
 14. sudo apt-get install python-psutil (проверка запущен ли процесс)
 
 15. sudo apt-get install supervisor
-16. sudo apt-get install ntp ntpdate ntp-server (синхронизация времени)
+16. sudo apt-get install ntp ntpdate (ntp-server синхронизация времени)
 17. sudo apt-get install htop
 18. sudo apt-get install python-pandas
 19. sudo pip install sqlalchemy
+20. sudo pip install pyusb
 
 ------------
 

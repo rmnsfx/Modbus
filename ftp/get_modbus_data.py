@@ -24,7 +24,7 @@ def write_log(mes):
 		#f = open('/var/log/daemon_modbus.log', 'w+')
 		f = open('/home/roman/daemon_modbus.log', 'a')
 		f.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-		f.write(str(' '))
+		f.write(str(' '))		
 		f.write(str(mes))				 
 		f.close()
 
@@ -40,23 +40,31 @@ def save_modbus():
 			
 				try:
 					if dev_port == 0:
-						all_data = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.5, 0000, 11, 4)			
+						all_data = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.8, 0000, 11, 4)			
 					if dev_port == 1:
-						all_data = template_modbus('/dev/ttyUSB1', 1, 115200, 8, 1, 0.5, 0000, 11, 4)			
+						all_data = template_modbus('/dev/ttyUSB1', 1, 115200, 8, 1, 0.8, 0000, 11, 4)			
 					if dev_port == 2:
-						all_data = template_modbus('/dev/ttyUSB2', 1, 115200, 8, 1, 0.5, 0000, 11, 4)			
+						all_data = template_modbus('/dev/ttyUSB2', 1, 115200, 8, 1, 0.8, 0000, 11, 4)			
 					if dev_port == 3:
-						all_data = template_modbus('/dev/ttyUSB3', 1, 115200, 8, 1, 0.5, 0000, 11, 4)			
+						all_data = template_modbus('/dev/ttyUSB3', 1, 115200, 8, 1, 0.8, 0000, 11, 4)			
 					if dev_port == 4:
-						all_data = template_modbus('/dev/ttyUSB4', 1, 115200, 8, 1, 0.5, 0000, 11, 4)	
+						all_data = template_modbus('/dev/ttyUSB4', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
 					if dev_port == 5:
-						all_data = template_modbus('/dev/ttyUSB5', 1, 115200, 8, 1, 0.5, 0000, 11, 4)	
-										
+						all_data = template_modbus('/dev/ttyUSB5', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+					if dev_port == 6:
+						all_data = template_modbus('/dev/ttyUSB6', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+					if dev_port == 7:
+						all_data = template_modbus('/dev/ttyUSB7', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+					if dev_port == 8:
+						all_data = template_modbus('/dev/ttyUSB8', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+					if dev_port == 9:
+						all_data = template_modbus('/dev/ttyUSB9', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+						
 				except:
-					write_log('Unable connect to modbus\n')			
+					write_log('Unable connect to modbus \n')			
 					
 					dev_port += 1				
-					if dev_port > 5: dev_port = 0					
+					if dev_port > 9: dev_port = 0					
 				
 
 				try:																		
@@ -122,7 +130,7 @@ def copyto_db(data):
 		except:						
 			write_log('Unable save to db \n')	
 		
-		sys.exit( 0 )
+			sys.exit( 0 )
 		
 		#else:				
 			#df = pd.read_csv('/home/roman/data/new_data.csv', header=None)
