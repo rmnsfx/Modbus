@@ -19,6 +19,48 @@
 
 <body>
 
+		<div class="data">
+
+			<div id="snackbar">Настройки сохранены</div>
+			<script>
+			function show_snackbar() {
+				// Get the snackbar DIV
+				var x = document.getElementById("snackbar")
+
+				// Add the "show" class to DIV
+				x.className = "show";
+
+				// After 3 seconds, remove the show class from DIV
+				setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+			}
+			</script>
+			
+			{% if save_mes %} <script> show_snackbar() </script> {% endif %}
+		
+			<form action="/data/" method="post" onClick="myFunction()">
+			
+				{% csrf_token %}
+				
+				<div class="text_mini">Дата/время начала выборки</div>
+				<p>{{ form_arch.datetime_start }} <div class="error_message"> {{ form_arch.datetime_start.errors | safe}}</p>
+				
+				<div class="text_mini">Дата/время конца выборки</div>
+				<p>{{ form_arch.datetime_end }} <div class="error_message"> {{ form_arch.datetime_end.errors | safe}}</p>
+				
+				<script>			
+				function myFunction() 
+					{
+						localStorage["data_page"] = "data_page";
+					}				
+				</script>
+				
+				<input type="submit" name="submit_data_form" class="flat" value="Сохранить" />
+			
+			</form> 
+			
+		</div>
+		
+		
 </body>
 
 

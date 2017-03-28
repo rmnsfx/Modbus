@@ -5,6 +5,11 @@ from .models import *
 from datetime import timedelta, datetime, tzinfo
 from django.forms import ModelForm
 from django.forms import fields 
+import datetime
+import time
+from django.forms.extras.widgets import SelectDateWidget
+from django.forms import ModelForm, Form
+from django.contrib.admin.widgets import AdminDateWidget
 
 	
 class MainSettingsForm(forms.ModelForm):
@@ -77,3 +82,13 @@ class ModbusSettingsForm(forms.ModelForm):
 		model = ModbusSettings		
 		exclude = ['user_login']
 		
+class ArchForm(forms.Form):	
+	
+	#date_field = forms.DateField(widget=SelectDateWidget(attrs={'class':'data'}))
+	#time_field = forms.TimeField(widget=SelectTimeWidget())
+	#datetime = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'placeholder': '2006-10-25 14:30:59'}))
+	#from_time = forms.TimeField(widget=SelectTimeWidget(attrs={'class':'data'}), initial=datetime.now(), required=False)
+	#t = forms.TimeField(widget=SelectTimeWidget())
+	#date_posted = forms.DateTimeField(widget = forms.widgets.SplitDateTimeWidget(attrs={'class':'data'}))
+	datetime_start = forms.DateTimeField(label="", widget=forms.DateTimeInput(attrs={'placeholder': '2006-10-25 14:30:59', 'class':'data'}), required=False)
+	datetime_end = forms.DateTimeField(label="", widget=forms.DateTimeInput(attrs={'placeholder': '2006-10-25 14:30:59', 'class':'data'}), required=False)

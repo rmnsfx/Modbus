@@ -41,19 +41,6 @@ def modbus_data():
 		
 		else:		
 			cursor = conn.cursor()
-			# cursor.execute("SELECT concat(data, ' ', datetime) FROM iface_data WHERE (datetime >= now()::date - INTERVAL '12 HOUR')", [num_reg])			
-						
-			# #os.makedirs(datetime.date.today().strftime("%Y/%m/%d"))
-			# f = open('/home/roman/data/%s' % num_reg, 'w')
-			# for row in cursor:
-				# print>>f, row[0]		
-
-			#cursor.execute("SELECT datetime, data, num_reg FROM iface_data WHERE (datetime >= now()::date - INTERVAL '12 HOUR')")					
-			#result = cursor.fetchall()
-			#f = open("/home/roman/data/data.csv","wb")
-			#c = csv.writer(f)
-			#c.writerows(result)			
-			#f.close()
 			
 			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '6 hour'", conn)						
 			df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')

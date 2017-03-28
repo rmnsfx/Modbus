@@ -36,7 +36,11 @@ def modbus_data():
 		
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
 			cursor = conn.cursor()
-			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= now() - interval '1 hour'", conn)						
+			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= DATE_TRUNC('hour', now()::date) - interval '1 hour'", conn)					
+			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN '2017-03-27 19:00' AND '2017-03-27 23:00'", conn)					
+			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp)", conn)					
+			
+			
 			df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')									
 			df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')						
 			conn.close()
@@ -141,9 +145,9 @@ def modem(state):
 			# mod.write("AT+CFUN=1")
 			# mod.close()		
 			
-		#if state == 'reset':
-			# dev = finddev(idVendor=0x12d1)
-			# dev.reset()	
+		if state == 'reset':
+			dev = finddev(idVendor=0x12d1)
+			dev.reset()	
 		
 
 def check_ping():
@@ -175,7 +179,7 @@ if __name__ == "__main__":
 						while modem_ready is False:	
 						
 							modem('start')		
-							time.sleep(30)
+							#time.sleep(5)
 							write_log('Modem start (ftp)\n')							
 							
 							if check_ping() is True:								
@@ -190,17 +194,22 @@ if __name__ == "__main__":
 										
 										write_log('Data send, go sleep (ftp)\n')	
 										modem('stop')										
-										time.sleep(60 * 1 * 1) #1 час						
+										#time.sleep(60 * 60 * 1) #1 час						
 										send_state = True	
-										#os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )										
+										sys.exit( 0 )			
 									
 									else:																
-										time.sleep(60)			
+										time.sleep(5)			
 								
 							else:
 								write_log('No ping, error init modem (ftp)\n')	
 								modem('stop')																	
-								time.sleep(30)	
+								modem('reset')
+								time.sleep(5)	
+								
+					else:
+						write_log('Error fetch data from db (ftp)\n')						
+						time.sleep(5)
 									
 				#except:
 				

@@ -99,6 +99,16 @@ p {
 }	
 
 
+/* Базовый контейнер табов */
+.data{
+	font-family: arial;
+	min-width: auto;
+	max-width: auto;
+	padding: 15px;
+	margin: 20px;	
+	background: #fff;
+	border: 1px solid #ddd;
+}
 
 
 /* Базовый контейнер табов */
