@@ -19,7 +19,7 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.main, name='main'),
+    url(r'^$', views.conf, name='conf'),
     url(r'^main/$', views.main, name='main'),	
 	url(r'^data/$', views.data, name='data'), 
 	url(r'^conf/$', views.conf, name='conf'),

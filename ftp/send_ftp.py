@@ -167,9 +167,8 @@ def check_ping():
 if __name__ == "__main__":		
 						
 				
-			while True:			
-				
-				#try:
+			while True:
+									
 				
 					if modbus_data() is True:				
 											
@@ -192,13 +191,15 @@ if __name__ == "__main__":
 																								
 									if send_ftp('/home/roman/data/', 'data.csv') is True:
 										
-										write_log('Data send, go sleep (ftp)\n')	
-										modem('stop')										
+										write_log('Data sent, go sleep (ftp)\n')											
+										modem('stop')								
+										os.system('sudo /etc/init.d/sms3 restart') #перезагружаем смс		
 										#time.sleep(60 * 60 * 1) #1 час						
 										send_state = True	
 										sys.exit( 0 )			
 									
-									else:																
+									else:
+										write_log('Try to send (ftp)\n')	
 										time.sleep(5)			
 								
 							else:
@@ -209,10 +210,6 @@ if __name__ == "__main__":
 								
 					else:
 						write_log('Error fetch data from db (ftp)\n')						
-						time.sleep(5)
-									
-				#except:
-				
-					#write_log('Error get modbus data (ftp)\n')	
-					#os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )
-					#time.sleep(5)
+						time.sleep(5)				
+						
+					os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )

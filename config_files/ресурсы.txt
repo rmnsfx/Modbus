@@ -22,6 +22,7 @@
 18. sudo apt-get install python-pandas
 19. sudo pip install sqlalchemy
 20. sudo pip install pyusb
+21. smstools (make, make install)
 
 ------------
 
@@ -37,6 +38,9 @@ CREATE USER roman WITH password '1234';
 GRANT ALL privileges ON DATABASE client TO roman;
 
 sudo /etc/init.d/postgresql start
+
+#размер бд
+select pg_database_size('client');
 
 ------------
 
@@ -54,3 +58,9 @@ udevadm control --reload-rules
 udevadm test /dev/ttyUSB3
 
 ------------
+
+#запуск smstools
+sudo /etc/init.d/sms3 restart
+
+#отправка смс
+sendsms 9194622246 'проверка'

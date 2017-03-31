@@ -62,6 +62,8 @@ def save_modbus():
 						
 				except:
 					write_log('Unable connect to modbus \n')			
+					write_log(str( 'current usb port# ' + str(dev_port)+ '\n' ))
+					
 					
 					dev_port += 1				
 					if dev_port > 9: dev_port = 0					
@@ -75,6 +77,7 @@ def save_modbus():
 						
 				except:				
 					write_log('Unable append namedtuple to list (modbus)\n')
+					
 				
 				
 				
