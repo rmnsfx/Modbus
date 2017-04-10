@@ -1,0 +1,9 @@
+[gammu]
+port = /dev/megafon-modem
+connection = at115200
+startinfo = no
+name=Huawey
+synchronizetime = no
+use_locking = no
+gammucoding = utf8
+model=e173

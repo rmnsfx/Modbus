@@ -35,14 +35,27 @@ def modbus_data():
 		try:
 		
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
-			cursor = conn.cursor()
+			cursor = conn.cursor("my_cursor_name")
+			cursor.itersize = 10000 # how much records to buffer on a client
+			
 			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= DATE_TRUNC('hour', now()::date) - interval '1 hour'", conn)					
 			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN '2017-03-27 19:00' AND '2017-03-27 23:00'", conn)					
-			df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp)", conn)					
+			
+			#-------------
+			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND #date_trunc('hour', now()::timestamp)", conn)							
+			#df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')									
+			#df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')						
+			#-------------
 			
 			
-			df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')									
-			df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')						
+			cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp) ")		
+		
+			df = cursor.fetchall() #Получаем list				
+			df2 = pd.DataFrame(df) #Конвертируем list в pandas dataframe
+			df2.columns = ['datetime', 'data', 'num_reg']  #Добавляем заголовки		
+			df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу													
+			df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f') 						
+			
 			conn.close()
 			
 			return True
@@ -51,7 +64,7 @@ def modbus_data():
 			
 			write_log('Unable to connect to the database (modbus_data) \n')			
 			conn = None
-			conn.close()
+			
 			
 			return False
 		
@@ -165,14 +178,14 @@ def check_ping():
 				
 				
 if __name__ == "__main__":		
-						
+			
+			restart_counter = 0		
+			send_state = False			
 				
-			while True:
-									
+			while send_state is False:									
 				
 					if modbus_data() is True:				
-											
-						send_state = False						
+					
 						modem_ready = False
 						
 						while modem_ready is False:	
@@ -187,29 +200,41 @@ if __name__ == "__main__":
 								send_counter = 0
 								write_log('Ping ok (ftp)\n')
 								
+								#Синхронизируем время
+								os.system("sudo ntpdate -bs ntp.remco.org")								
+								
 								while send_state is False:
 																								
 									if send_ftp('/home/roman/data/', 'data.csv') is True:
 										
-										write_log('Data sent, go sleep (ftp)\n')											
+										write_log('Data sent, go exit (ftp)\n')											
 										modem('stop')								
-										os.system('sudo /etc/init.d/sms3 restart') #перезагружаем смс		
+										#os.system('sudo /etc/init.d/sms3 restart') #перезагружаем смс		
 										#time.sleep(60 * 60 * 1) #1 час						
 										send_state = True	
 										sys.exit( 0 )			
 									
 									else:
 										write_log('Try to send (ftp)\n')	
+										modem('stop')	
+										modem('start')	
 										time.sleep(5)			
 								
 							else:
 								write_log('No ping, error init modem (ftp)\n')	
 								modem('stop')																	
 								modem('reset')
-								time.sleep(5)	
+								time.sleep(60)	
+								
+								restart_counter += 1
+								if restart_counter > 10:
+									restart_counter = 0
+									write_log('Exit as no ping, error init modem (ftp)\n')
+									sys.exit( 0 )
+									
 								
 					else:
 						write_log('Error fetch data from db (ftp)\n')						
 						time.sleep(5)				
 						
-					os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )
+					#os.system("sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'" )

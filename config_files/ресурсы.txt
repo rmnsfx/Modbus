@@ -22,7 +22,8 @@
 18. sudo apt-get install python-pandas
 19. sudo pip install sqlalchemy
 20. sudo pip install pyusb
-21. smstools (make, make install)
+21. sudo apt-get install gammu python-gammu gammu-smsd
+22. sudo apt-get install watchdog
 
 ------------
 
@@ -59,8 +60,16 @@ udevadm test /dev/ttyUSB3
 
 ------------
 
-#запуск smstools
-sudo /etc/init.d/sms3 restart
+#GAMMU
 
+sudo gammu-smsd-inject TEXT +79194622246 -text "Text message 3"
+sudo /etc/init.d/gammu-smsd restart 
+sudo gammu-smsd-monitor 
+
+------------
+
+#smstools (make, make install)
+#запуск smstools
+#sudo /etc/init.d/sms3 restart
 #отправка смс
-sendsms 9194622246 'проверка'
+#sendsms 9194622246 'проверка'

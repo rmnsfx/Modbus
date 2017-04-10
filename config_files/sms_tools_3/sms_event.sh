@@ -53,7 +53,13 @@ case "$1" in
 			OUTPUT="$(sudo supervisorctl status)"					
 			sudo sendsms 9194622246 "$OUTPUT"
 			exit
-			
+		
+		elif [[ "${FROM}" == "${ADMINPHONE1}" && "$BODY" == "size" ]] || [[ "${FROM}" == "${ADMINPHONE2}" && "$BODY" == "size" ]]; 
+		then
+			echo -e "From: ${FROM} Date: ${DATE} ${BODY}" 
+			OUTPUT="$(df -h --total | grep total)"					
+			sudo sendsms 9194622246 "$OUTPUT"
+			exit	
 		else		
 			echo -e "Recive sms -> else. From: ${FROM} Date: ${DATE} ${BODY}" 
 		fi

@@ -114,7 +114,7 @@ def save_modbus():
 					#print (end_time - start_time)	
 				
 				else:
-					time.sleep(0.09)
+					time.sleep(0.08)
 				
 				
 				counter += 1

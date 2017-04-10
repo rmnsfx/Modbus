@@ -1,0 +1,64 @@
+[gammu]
+port=/dev/megafon-modem
+connection=at
+name=huawei e173
+model=e173
+ 
+# Debugging
+logformat = textall
+ 
+# SMSD configuration, see gammu-smsdrc(5)
+[smsd]
+service = files
+logfile = /var/log/gammu.log
+# Increase for debugging information
+debuglevel = 0
+ 
+# Paths where messages are stored
+inboxpath = /var/spool/gammu/inbox/
+outboxpath = /var/spool/gammu/outbox/
+sentsmspath = /var/spool/gammu/sent/
+errorsmspath = /var/spool/gammu/error/
+ 
+# Кодировка сообщений
+OutboxFormat = unicode
+TransmitFormat = auto
+
+
+
+
+#[gammu]
+#port=/dev/ttyUSB0
+#connection = at115200
+#name = T68i
+#model =
+#synchronizetime = yes
+#logfile = /var/log/gammu-smsd
+#logformat = textall
+#use_locking = yes
+#gammuloc = locfile
+#startinfo = yes
+#gammucoding = utf8
+#usephonedb = yes
+#number1 = 1234
+#[smsd]
+#service = MYSQL
+#PIN =.
+#debuglevel = 1
+#logfile = /var/log/gammu-smsd
+#phoneid = +79211234567
+#commtimeout = 30
+#sendtimeout = 30
+#receivefrequency = 0
+#checksecurity = 1
+#resetfrequency = 0
+#deliveryreport = no
+#deliveryreportdelay = 10
+#inboxformat = unicode
+#transmitformat = auto
+#outboxformat = detail
+#user = user_for_kalkun
+#password = pass
+#pc = localhost
+#database = name_database
+

@@ -2,13 +2,20 @@
 {% load staticfiles %}
 
 <html>
+
 <body bgcolor="#ffffff">
+
 <head>
-<script src="/static/jquery.min.js"></script>
-<script src="/static/highcharts.js"></script>
-<script src="/static/highcharts-downsample.js"></script>
-<script src="https://code.highcharts.com/modules/boost.js"></script>
+	<meta charset="utf-8">
+	<script src="/static/jquery.min.js"></script>
+	<script src="/static/highcharts.js"></script>
+	<script src="/static/highcharts-downsample.js"></script>
+	<link href="/static/css/c3.css" rel="stylesheet" type="text/css">
+	<script src="/static/d3.min.js"></script>
+	<script src="/static/d3.v3.js"></script>
+	<script src="/static/c3.js"></script>
 </head>
+
 <header>
 	<link rel="stylesheet" href="{% static 'css/iface.css' %}">
     <div class="page-header">Регистратор</div> 
@@ -20,12 +27,26 @@
   <li><a href="/conf/">КОНФИГУРАЦИЯ</a></li> 
 </ul>	
 
+
 <body>
 
-<div id="chart_container" style="width:100%; height:80%;"></div>
-  
+<div id="chart_container" style="width:100%; height:80%;"></div> 
 
-</body>
+<!-- <div id="chart" style="width:100%; height:80%;"></div>
+<script>
+var chart = c3.generate({
+    bindto: '#chart',
+    data: {
+    json: [
+			{{ reg1 | safe }} 
+    ],
+   
+  },	
+	zoom: {
+        enabled: true
+    }  
+}); 
+</script> -->
 
 
 <script>
@@ -47,8 +68,7 @@ $('#chart_container').highcharts({
 //            text: 'Source: WorldClimate.com'
 //        },
         xAxis: {
-            categories: {{ time | safe }}
-			//categories: [1,2,3,4,5,6,7,8]
+            categories: {{ time | safe }}			
 			
         },
         yAxis: {
@@ -66,11 +86,11 @@ $('#chart_container').highcharts({
 			
         },
         series: [
-			{     			
+			{   						
 				name: 'Reg 1',            
 				data: {{ reg1 | safe }} 
 							
-			}, 
+/*			}, 
 			{
 				name: 'Reg 2',            
 				//data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
@@ -112,11 +132,11 @@ $('#chart_container').highcharts({
 			{
 				name: 'Reg 11',            
 				data: {{ reg11 | safe }}			
-			
+*/			
         }]
     });
 });
-</script>
+</script> 
 
 
 </body>

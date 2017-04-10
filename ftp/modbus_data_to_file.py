@@ -61,20 +61,21 @@ def save_modbus():
 					dev_port += 1				
 					if dev_port > 9: dev_port = 0					
 				
-					
-				try:
+				else:	
 				
-					f = open('/home/roman/data/new_data.csv', 'a')
-					f.write(str(datetime.datetime.now()))
-					f.write(str(';'))	
-					for i in all_data:	
-						f.write(str(i))				 
-						f.write(str(';'))							
-					f.write(str('\n'))		
-					f.close()
-						
-				except:				
-					write_log('Unable save to file \n')
+					try:
+					
+						f = open('/home/roman/data/new_data.csv', 'a')
+						f.write(str(datetime.datetime.now()))
+						f.write(str(';'))	
+						for i in all_data:	
+							f.write(str(i))				 
+							f.write(str(';'))							
+						f.write(str('\n'))		
+						f.close()
+							
+					except:				
+						write_log('Unable save to file \n')
 					
 				time.sleep(0.07)
 
