@@ -24,7 +24,8 @@ errorsmspath = /var/spool/gammu/error/
 OutboxFormat = unicode
 TransmitFormat = auto
 
-
+sendtimeout = 1
+commtimeout = 1
 
 
 #[gammu]

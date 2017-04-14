@@ -17,6 +17,8 @@ import numpy as np
 import serial
 import threading
 from usb.core import find as finddev
+from pgdb import connect
+import pandas.io.sql as psql
 
 last_datetime = None
 
@@ -33,28 +35,46 @@ def modbus_data():
 		#result = None
 		
 		try:
-		
+	
+			#-------------
+			#PSYCOPG2
+			#-------------
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
 			cursor = conn.cursor("my_cursor_name")
-			cursor.itersize = 10000 # how much records to buffer on a client
 			
-			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= DATE_TRUNC('hour', now()::date) - interval '1 hour'", conn)					
-			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN '2017-03-27 19:00' AND '2017-03-27 23:00'", conn)					
+			cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp) ")
 			
+			while True:
+				chunk = cursor.fetchmany(1000)
+				if chunk == []:
+					break;
+				
+				df2 = pd.DataFrame(chunk) #Конвертируем list в pandas dataframe
+				df2.columns = ['datetime', 'data', 'num_reg']	 #Добавляем заголовки		
+				df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу													
+				df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f', mode ='a')	
+			
+			#-------------			
+			#PANDAS	
 			#-------------
-			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND #date_trunc('hour', now()::timestamp)", conn)							
-			#df2 = pd.pivot_table(df, index='datetime', columns='num_reg', values='data')									
-			#df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')						
+			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp)", conn)	
+			
+			#chunk
+			#for chunk in pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp)", conn, chunksize=100000):
+				#print(chunk)
+			
+			#df2 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data')									
+			#df2.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')		
+			
+			#-------------			
+			#PyGreSQL
 			#-------------
-			
-			
-			cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp) ")		
-		
-			df = cursor.fetchall() #Получаем list				
-			df2 = pd.DataFrame(df) #Конвертируем list в pandas dataframe
-			df2.columns = ['datetime', 'data', 'num_reg']  #Добавляем заголовки		
-			df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу													
-			df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f') 						
+			#conn = connect(dbname='client', user='roman', host='localhost', password='1234')
+			#cursor = conn.cursor()			
+			#cursor.execute("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp)")			
+			#df = cursor.fetchall()		
+			#-------------
+								
 			
 			conn.close()
 			
@@ -65,12 +85,11 @@ def modbus_data():
 			write_log('Unable to connect to the database (modbus_data) \n')			
 			conn = None
 			
-			
 			return False
 		
 		
 			
-			# cursor.execute("SELECT concat(data, ' ', datetime) FROM iface_data WHERE (datetime >= now()::date - INTERVAL '12 HOUR')", [num_reg])			
+			# cursor.execute("SELECT concat(data, ' ', datetime) FROM iface_data WHERE (datetime >= now()::date - INTERVAL '12 HOUR')", [num_reg])		
 						
 			# #os.makedirs(datetime.date.today().strftime("%Y/%m/%d"))
 			# f = open('/home/roman/data/%s' % num_reg, 'w')
@@ -83,6 +102,11 @@ def modbus_data():
 			#c = csv.writer(f)
 			#c.writerows(result)			
 			#f.close()
+			
+			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= DATE_TRUNC('hour', now()::date) - interval '1 hour'", conn)					
+			#df = pd.read_sql_query("SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN '2017-03-27 19:00' AND '2017-03-27 23:00'", conn)					
+			#cursor.itersize = 10000 # how much records to buffer on a client
+			#df = cursor.fetchall() #Получаем list	
 			
 
 			
@@ -212,11 +236,13 @@ if __name__ == "__main__":
 										#os.system('sudo /etc/init.d/sms3 restart') #перезагружаем смс		
 										#time.sleep(60 * 60 * 1) #1 час						
 										send_state = True	
+										os.system('sudo rm /home/roman/data/data.csv') #удаляем файлик		
 										sys.exit( 0 )			
 									
 									else:
 										write_log('Try to send (ftp)\n')	
 										modem('stop')	
+										modem('reset')
 										modem('start')	
 										time.sleep(5)			
 								
@@ -227,8 +253,7 @@ if __name__ == "__main__":
 								time.sleep(60)	
 								
 								restart_counter += 1
-								if restart_counter > 10:
-									restart_counter = 0
+								if restart_counter > 5:									
 									write_log('Exit as no ping, error init modem (ftp)\n')
 									sys.exit( 0 )
 									

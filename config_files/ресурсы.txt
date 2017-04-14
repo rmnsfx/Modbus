@@ -68,6 +68,15 @@ sudo gammu-smsd-monitor
 
 ------------
 
+#Автозагрузка
+
+/etc/rc.local
+/etc/init.d
+update-rc.d
+
+------------
+
+
 #smstools (make, make install)
 #запуск smstools
 #sudo /etc/init.d/sms3 restart
