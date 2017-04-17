@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # coding: utf-8
+from __future__ import generators
 import os
 import daemon 
 import sys
@@ -20,7 +21,18 @@ from usb.core import find as finddev
 from pgdb import connect
 import pandas.io.sql as psql
 
+
 last_datetime = None
+
+def ResultIter(cursor, arraysize=1000):
+    'An iterator that uses fetchmany to keep memory usage down'
+    while True:
+        results = cursor.fetchmany(arraysize)
+        if not results:
+            break
+        for result in results:
+            yield result
+
 
 def write_log(mes):				
 		#f = open('/var/log/daemon_modbus.log', 'w+')
@@ -42,16 +54,32 @@ def modbus_data():
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
 			cursor = conn.cursor("my_cursor_name")
 			
-			cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()::timestamp) - INTERVAL '1 HOUR') AND date_trunc('hour', now()::timestamp) ")
+			#cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND date_trunc('hour', now()) ")
+			
+			cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND datetime < date_trunc('hour', now()) ")
+					
 			
 			while True:
 				chunk = cursor.fetchmany(1000)
-				if chunk == []:
+				if not chunk:
 					break;
 				
-				df2 = pd.DataFrame(chunk) #Конвертируем list в pandas dataframe
+				
+				
+			# all_row = []			
+			# while True:			
+				# row = cursor.fetchone()						
+				# if row == []:
+					# break;				
+				# all_row.append(row)				
+			# print(all_row)	
+				
+			#chunk = cursor.fetchall() #Получаем list		
+				
+							
+				df2 = pd.DataFrame( chunk ) #Конвертируем list в pandas dataframe				
 				df2.columns = ['datetime', 'data', 'num_reg']	 #Добавляем заголовки		
-				df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу													
+				df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу	
 				df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f', mode ='a')	
 			
 			#-------------			
@@ -225,7 +253,8 @@ if __name__ == "__main__":
 								write_log('Ping ok (ftp)\n')
 								
 								#Синхронизируем время
-								os.system("sudo ntpdate -bs ntp.remco.org")								
+								os.system("sudo ntpdate -bs ntp.remco.org")			
+								time.sleep(3)								
 								
 								while send_state is False:
 																								
