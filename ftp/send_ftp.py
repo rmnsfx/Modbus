@@ -20,18 +20,18 @@ import threading
 from usb.core import find as finddev
 from pgdb import connect
 import pandas.io.sql as psql
-
+import psycopg2.extensions
 
 last_datetime = None
 
 def ResultIter(cursor, arraysize=1000):
-    'An iterator that uses fetchmany to keep memory usage down'
-    while True:
-        results = cursor.fetchmany(arraysize)
-        if not results:
-            break
-        for result in results:
-            yield result
+	'An iterator that uses fetchmany to keep memory usage down'
+	while True:
+		results = cursor.fetchmany(arraysize)
+		if not results:
+			break
+		for result in results:
+			yield result
 
 
 def write_log(mes):				
@@ -46,26 +46,75 @@ def modbus_data():
 				
 		#result = None
 		
-		try:
+		#try:
 	
 			#-------------
 			#PSYCOPG2
 			#-------------
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
-			cursor = conn.cursor("my_cursor_name")
+			#conn.autocommit = True
+									
+			cursor = conn.cursor(name='things')
+			cursor1 = conn.cursor(name='test')
+			
+			cursor.itersize = 10000
 			
 			#cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND date_trunc('hour', now()) ")
 			
 			cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND datetime < date_trunc('hour', now()) ")
-					
 			
-			while True:
-				chunk = cursor.fetchmany(1000)
-				if not chunk:
-					break;
+			cursor1.execute("SELECT COUNT(*) FROM iface_data WHERE datetime >= (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND datetime < date_trunc('hour', now())")
+			
+			row_count = cursor1.fetchone()
+			row = int(row_count[0])
+									
+			#print(row)
+			write_log(row)
+			
+			get_flag = False
+			
+			while not get_flag:
+					
+				i = 0
 				
+				while True:
+					#try:
+										
+						chunk = cursor.fetchmany(10000)
+						if not chunk:
+							break;
+						
+						i +=len(chunk)
+						
+						print(i)
+						
+						df2 = pd.DataFrame( chunk ) #Конвертируем list в pandas dataframe				
+						df2.columns = ['datetime', 'data', 'num_reg']	 #Добавляем заголовки		
+						df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу	
+						df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f', mode ='a')	
+					
+					#except psycopg2.Error, e:
+						
+						#print(e)
+		
+				if row == i:
 				
+					#print("GOOD!")
+					write_log("Fetch all data (modbus_data)")
+					
+					get_flag = True			
+					conn.close()			
+					return True	
 				
+				else:
+					
+					write_log("Fetch not all try once again (modbus_data)")
+					os.system('sudo rm /home/roman/data/data.csv') #удаляем файлик							
+					
+					print(row, i)
+			
+			
+
 			# all_row = []			
 			# while True:			
 				# row = cursor.fetchone()						
@@ -74,13 +123,16 @@ def modbus_data():
 				# all_row.append(row)				
 			# print(all_row)	
 				
-			#chunk = cursor.fetchall() #Получаем list		
-				
-							
-				df2 = pd.DataFrame( chunk ) #Конвертируем list в pandas dataframe				
-				df2.columns = ['datetime', 'data', 'num_reg']	 #Добавляем заголовки		
-				df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу	
-				df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f', mode ='a')	
+			#chunk = cursor.fetchall() #Получаем list	
+
+		# except psycopg2.OperationalError as e:
+			# print(e)
+			# write_log(str('psycopg2 error: %s \n', e))			
+
+			# if conn:			
+				# conn.close()
+			
+			
 			
 			#-------------			
 			#PANDAS	
@@ -103,19 +155,16 @@ def modbus_data():
 			#df = cursor.fetchall()		
 			#-------------
 								
+
 			
-			conn.close()
+		#except:
 			
-			return True
+			#write_log('Unable to connect to the database (modbus_data) \n')			
+			#conn = None
 			
-		except:
-			
-			write_log('Unable to connect to the database (modbus_data) \n')			
-			conn = None
-			
-			return False
+			#return False
 		
-		
+
 			
 			# cursor.execute("SELECT concat(data, ' ', datetime) FROM iface_data WHERE (datetime >= now()::date - INTERVAL '12 HOUR')", [num_reg])		
 						
@@ -239,7 +288,7 @@ if __name__ == "__main__":
 					if modbus_data() is True:				
 					
 						modem_ready = False
-						
+												
 						while modem_ready is False:	
 						
 							modem('start')		

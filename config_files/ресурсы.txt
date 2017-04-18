@@ -76,6 +76,20 @@ update-rc.d
 
 ------------
 
+#Отключить OOM Killer
+
+sudo sysctl -w vm.overcommit_memory=2
+
+------------
+
+#Файл подкачки: swap-файл
+
+sudo dd if=/dev/zero of=/swapfile bs=1M count=500
+sudo mkswap /swapfile
+sudo swapon /swapfile
+записать /swapfile none swap sw 0 0 в /etc/fstab
+
+------------
 
 #smstools (make, make install)
 #запуск smstools
