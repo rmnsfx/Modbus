@@ -52,69 +52,29 @@ def modbus_data():
 			#PSYCOPG2
 			#-------------
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
+			
 			#conn.autocommit = True
 									
 			cursor = conn.cursor(name='things')
-			cursor1 = conn.cursor(name='test')
-			
+						
 			cursor.itersize = 10000
+						
+			cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND date_trunc('hour', now()) ")
 			
-			#cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime BETWEEN (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND date_trunc('hour', now()) ")
 			
-			cursor.execute(" SELECT datetime, data, num_reg FROM iface_data WHERE datetime >= (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND datetime < date_trunc('hour', now()) ")
-			
-			cursor1.execute("SELECT COUNT(*) FROM iface_data WHERE datetime >= (date_trunc('hour', now()) - INTERVAL '1 HOUR') AND datetime < date_trunc('hour', now())")
-			
-			row_count = cursor1.fetchone()
-			row = int(row_count[0])
+			while True:
+				#try:
 									
-			#print(row)
-			write_log(row)
-			
-			get_flag = False
-			
-			while not get_flag:
-					
-				i = 0
-				
-				while True:
-					#try:
-										
-						chunk = cursor.fetchmany(10000)
-						if not chunk:
-							break;
+					chunk = cursor.fetchmany(10000)
+					if not chunk:
+						break;
 						
-						i +=len(chunk)
-						
-						print(i)
-						
-						df2 = pd.DataFrame( chunk ) #Конвертируем list в pandas dataframe				
-						df2.columns = ['datetime', 'data', 'num_reg']	 #Добавляем заголовки		
-						df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу	
-						df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f', mode ='a')	
+					df2 = pd.DataFrame( chunk ) #Конвертируем list в pandas dataframe				
+					df2.columns = ['datetime', 'data', 'num_reg']	 #Добавляем заголовки		
+					df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу	
+					df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f', mode ='a')	
 					
-					#except psycopg2.Error, e:
-						
-						#print(e)
-		
-				if row == i:
-				
-					#print("GOOD!")
-					write_log("Fetch all data (modbus_data)")
-					
-					get_flag = True			
-					conn.close()			
-					return True	
-				
-				else:
-					
-					write_log("Fetch not all try once again (modbus_data)")
-					os.system('sudo rm /home/roman/data/data.csv') #удаляем файлик							
-					
-					print(row, i)
-			
-			
-
+								
 			# all_row = []			
 			# while True:			
 				# row = cursor.fetchone()						
@@ -129,9 +89,10 @@ def modbus_data():
 			# print(e)
 			# write_log(str('psycopg2 error: %s \n', e))			
 
-			# if conn:			
-				# conn.close()
+			if conn:			
+				conn.close()
 			
+			return True			
 			
 			
 			#-------------			
@@ -196,7 +157,7 @@ def send_ftp(path, name):
 		session = ftplib.FTP('92.53.96.8','npptik_nir','iF0wUAqhD4o0wuBmtH0J')
 		file = open(path + name,'rb')
 		#os.makedirs(datetime.date.today().strftime("%Y-%m-%d_%h-%m"))
-		result = session.storbinary('STOR /nir/data_' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '.csv', file)		
+		result = session.storbinary('STOR /nir/' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '.csv', file)		
 		file.close()									
 		session.quit()		
 		
@@ -260,8 +221,9 @@ def modem(state):
 			# mod.close()		
 			
 		if state == 'reset':
-			dev = finddev(idVendor=0x12d1)
-			dev.reset()	
+			# dev = finddev(idVendor=0x12d1)
+			# dev.reset()	
+			os.system('sudo /home/roman/modem3g/sakis3g reconnect APN="internet"')
 		
 
 def check_ping():
@@ -291,8 +253,7 @@ if __name__ == "__main__":
 												
 						while modem_ready is False:	
 						
-							modem('start')		
-							#time.sleep(5)
+							modem('start')									
 							write_log('Modem start (ftp)\n')							
 							
 							if check_ping() is True:								
@@ -301,8 +262,12 @@ if __name__ == "__main__":
 								send_counter = 0
 								write_log('Ping ok (ftp)\n')
 								
-								#Синхронизируем время
-								os.system("sudo ntpdate -bs ntp.remco.org")			
+								try:
+									#Синхронизируем время
+									os.system("sudo ntpdate -bs ntp.remco.org")			
+								except:
+									write_log('Could not sync the time (ftp)\n')
+								
 								time.sleep(3)								
 								
 								while send_state is False:
@@ -311,24 +276,26 @@ if __name__ == "__main__":
 										
 										write_log('Data sent, go exit (ftp)\n')											
 										modem('stop')								
-										#os.system('sudo /etc/init.d/sms3 restart') #перезагружаем смс		
-										#time.sleep(60 * 60 * 1) #1 час						
 										send_state = True	
 										os.system('sudo rm /home/roman/data/data.csv') #удаляем файлик		
 										sys.exit( 0 )			
 									
 									else:
-										write_log('Try to send (ftp)\n')	
-										modem('stop')	
-										modem('reset')
-										modem('start')	
-										time.sleep(5)			
+										
+										write_log('Try to send (ftp)\n')											
+										modem('reset')										
+										#time.sleep(30)
+										
+										send_counter += 1
+										if send_counter > 5:									
+											write_log('Exit as can not send to ftp (ftp)\n')
+											modem('stop')	
+											sys.exit( 0 )										
 								
 							else:
-								write_log('No ping, error init modem (ftp)\n')	
-								modem('stop')																	
+								write_log('No ping, error init modem (ftp)\n')																							
 								modem('reset')
-								time.sleep(60)	
+								time.sleep(10)	
 								
 								restart_counter += 1
 								if restart_counter > 5:									

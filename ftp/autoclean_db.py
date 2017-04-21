@@ -44,11 +44,11 @@ def clean_data():
 			conn.commit()
 			conn.close()
 			
-			write_log(returnStr)
+			write_log('Clean the database OK! (clean_data) \n')
 			
 			return returnStr
 			
 			
 if __name__ == "__main__":	
 
-		print( clean_data() )
+		clean_data()

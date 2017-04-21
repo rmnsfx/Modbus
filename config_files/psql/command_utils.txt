@@ -1,0 +1,6 @@
+#Создать индекс по столбцу
+CREATE INDEX ON iface_data(datetime)
+
+
+#Размер БД
+select pg_database_size('client');
