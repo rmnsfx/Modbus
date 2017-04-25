@@ -51,7 +51,11 @@ sudo ntpdate -bs ntp.remco.org
 ------------
 
 #реквизиты usb устройства
-lsusb -v или udevadm info --query=all -a -n /dev/ttyUSB0
+lsusb -v 
+
+или 
+
+udevadm info --query=all -a -n /dev/ttyUSB0
 
 sudo udevadm control --reload
 udevadm control --reload-rules

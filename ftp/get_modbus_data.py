@@ -30,6 +30,8 @@ def write_log(mes):
 
 def save_modbus():
 		
+		port = '/dev/rs485'
+		speed = 115200
 		buffer_size = 100
 		counter = 0
 		dev_port = 0		
@@ -40,25 +42,25 @@ def save_modbus():
 			
 				try:
 					if dev_port == 0:
-						all_data = template_modbus('/dev/ttyUSB0', 1, 115200, 8, 1, 0.8, 0000, 11, 4)			
+						all_data = template_modbus('/dev/ttyUSB0', 1, speed, 8, 1, 0.8, 0000, 11, 4)			
 					if dev_port == 1:
-						all_data = template_modbus('/dev/ttyUSB1', 1, 115200, 8, 1, 0.8, 0000, 11, 4)			
+						all_data = template_modbus('/dev/ttyUSB1', 1, speed, 8, 1, 0.8, 0000, 11, 4)			
 					if dev_port == 2:
-						all_data = template_modbus('/dev/ttyUSB2', 1, 115200, 8, 1, 0.8, 0000, 11, 4)			
+						all_data = template_modbus('/dev/ttyUSB2', 1, speed, 8, 1, 0.8, 0000, 11, 4)			
 					if dev_port == 3:
-						all_data = template_modbus('/dev/ttyUSB3', 1, 115200, 8, 1, 0.8, 0000, 11, 4)			
+						all_data = template_modbus('/dev/ttyUSB3', 1, speed, 8, 1, 0.8, 0000, 11, 4)			
 					if dev_port == 4:
-						all_data = template_modbus('/dev/ttyUSB4', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+						all_data = template_modbus('/dev/ttyUSB4', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
 					if dev_port == 5:
-						all_data = template_modbus('/dev/ttyUSB5', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+						all_data = template_modbus('/dev/ttyUSB5', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
 					if dev_port == 6:
-						all_data = template_modbus('/dev/ttyUSB6', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+						all_data = template_modbus('/dev/ttyUSB6', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
 					if dev_port == 7:
-						all_data = template_modbus('/dev/ttyUSB7', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+						all_data = template_modbus('/dev/ttyUSB7', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
 					if dev_port == 8:
-						all_data = template_modbus('/dev/ttyUSB8', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+						all_data = template_modbus('/dev/ttyUSB8', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
 					if dev_port == 9:
-						all_data = template_modbus('/dev/ttyUSB9', 1, 115200, 8, 1, 0.8, 0000, 11, 4)	
+						all_data = template_modbus('/dev/ttyUSB9', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
 						
 				except:
 					write_log('Unable connect to modbus \n')			
