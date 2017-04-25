@@ -41,30 +41,13 @@ def save_modbus():
 		while True:	
 			
 				try:
-					if dev_port == 0:
-						all_data = template_modbus('/dev/ttyUSB0', 1, speed, 8, 1, 0.8, 0000, 11, 4)			
-					if dev_port == 1:
-						all_data = template_modbus('/dev/ttyUSB1', 1, speed, 8, 1, 0.8, 0000, 11, 4)			
-					if dev_port == 2:
-						all_data = template_modbus('/dev/ttyUSB2', 1, speed, 8, 1, 0.8, 0000, 11, 4)			
-					if dev_port == 3:
-						all_data = template_modbus('/dev/ttyUSB3', 1, speed, 8, 1, 0.8, 0000, 11, 4)			
-					if dev_port == 4:
-						all_data = template_modbus('/dev/ttyUSB4', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
-					if dev_port == 5:
-						all_data = template_modbus('/dev/ttyUSB5', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
-					if dev_port == 6:
-						all_data = template_modbus('/dev/ttyUSB6', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
-					if dev_port == 7:
-						all_data = template_modbus('/dev/ttyUSB7', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
-					if dev_port == 8:
-						all_data = template_modbus('/dev/ttyUSB8', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
-					if dev_port == 9:
-						all_data = template_modbus('/dev/ttyUSB9', 1, speed, 8, 1, 0.8, 0000, 11, 4)	
+		
+					all_data = template_modbus(port, 1, speed, 8, 1, 0.8, 0000, 11, 4)			
+		
 						
 				except:
 					write_log('Unable connect to modbus \n')			
-					write_log(str( 'current usb port# ' + str(dev_port)+ '\n' ))
+					#write_log(str( 'current usb port# ' + str(dev_port)+ '\n' ))
 					
 					
 					dev_port += 1				
