@@ -15,6 +15,8 @@ import pandas as pd
 from sqlalchemy import create_engine
 import threading
 from collections import namedtuple
+from usb.core import find as finddev
+import fcntl
 
 
 class Data:
@@ -33,8 +35,8 @@ def save_modbus():
 		port = '/dev/rs485'
 		speed = 115200
 		buffer_size = 100
-		counter = 0
-		dev_port = 0		
+		counter = 0		
+		except_counter = 0
 		data_list = []		
 		Point = namedtuple('Point', ['datetime', 'num_reg', 'value'])
 		
@@ -46,63 +48,70 @@ def save_modbus():
 		
 						
 				except:
-					write_log('Unable connect to modbus \n')			
-					#write_log(str( 'current usb port# ' + str(dev_port)+ '\n' ))
+					write_log('Unable connect to modbus \n')		
+					all_data = None
 					
-					
-					dev_port += 1				
-					if dev_port > 9: dev_port = 0					
-				
-
-				try:																		
-					date = datetime.datetime.now()	
-								
-					for idx, i in enumerate(all_data):							
-						data_list.append(Point(date, idx, i))	
+					if except_counter > 9:
+						except_counter = 0
 						
-				except:				
-					write_log('Unable append namedtuple to list (modbus)\n')
-					
-				
-				
-				
-				if counter >= buffer_size:						
-				
-					#start_time = time.time()
-				
-					counter = 0				
-					threads = [] 
-					fork = True
-					
-					try: pid = os.fork()
-					
-					except:
-						write_log( "Ошибка создания дочернего процесса" )
-						fork = False
+						os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/unbind")						
+						time.sleep(1)
+						os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/bind")						
 						
-					else:
-						if pid == 0 : # дочерний процесс
-							copyto_db(data_list)
-							
-							sys.exit( 0 )
-							
-						if pid > 0 :  # родительский процесс
-							#os.wait()							
-							signal.signal(signal.SIGCHLD,signal.SIG_IGN) # игнорируем зомби 
-							
-					
-					#Реинициализация списка
-					data_list = None
-					data_list = []
-				
-					#end_time = time.time()					
-					#print (end_time - start_time)	
+						write_log('Power reset 485 (modbus)\n')
+						
+						
+					except_counter += 1
 				
 				else:
-					time.sleep(0.08)
+
+					try:																		
+						date = datetime.datetime.now()	
+									
+						for idx, i in enumerate(all_data):							
+							data_list.append(Point(date, idx, i))	
+							
+					except:				
+						write_log('Unable append namedtuple to list (modbus)\n')				
 				
 				
-				counter += 1
+					if counter >= buffer_size:						
+					
+						#start_time = time.time()
+					
+						counter = 0				
+						threads = [] 
+						fork = True
+						
+						try: pid = os.fork()
+						
+						except:
+							write_log( "Ошибка создания дочернего процесса" )
+							fork = False
+							
+						else:
+							if pid == 0 : # дочерний процесс
+								copyto_db(data_list)
+								
+								sys.exit( 0 )
+								
+							if pid > 0 :  # родительский процесс
+								#os.wait()							
+								signal.signal(signal.SIGCHLD,signal.SIG_IGN) # игнорируем зомби 
+								
+						
+						#Реинициализация списка
+						data_list = None
+						data_list = []
+					
+						#end_time = time.time()					
+						#print (end_time - start_time)	
+					
+					else:
+						time.sleep(0.08)
+					
+					
+					counter += 1
 					
 				
 def copyto_db(data):
