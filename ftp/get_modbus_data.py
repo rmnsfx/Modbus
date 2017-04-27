@@ -17,6 +17,10 @@ import threading
 from collections import namedtuple
 from usb.core import find as finddev
 import fcntl
+import RPi.GPIO as GPIO
+
+
+
 
 
 class Data:
@@ -40,20 +44,26 @@ def save_modbus():
 		data_list = []		
 		Point = namedtuple('Point', ['datetime', 'num_reg', 'value'])
 		
-		while True:	
+		LED = 4
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(LED, GPIO.OUT)
+		#GPIO.setwarnings(False)
+		
+		
+		while True:											
 			
 				try:
 		
-					all_data = template_modbus(port, 1, speed, 8, 1, 0.8, 0000, 11, 4)			
-		
-						
-				except:
+					all_data = template_modbus(port, 1, speed, 8, 1, 0.8, 0000, 11, 4)
+					
+				except:				
+				
 					write_log('Unable connect to modbus \n')		
 					all_data = None
 					
 					if except_counter > 9:
-						except_counter = 0
-						
+					
+						except_counter = 0						
 						os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/unbind")						
 						time.sleep(1)
 						os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/bind")						
@@ -62,9 +72,13 @@ def save_modbus():
 						
 						
 					except_counter += 1
+										
+					GPIO.cleanup()
 				
 				else:
-
+					
+					GPIO.output(LED, True)
+					
 					try:																		
 						date = datetime.datetime.now()	
 									
@@ -83,7 +97,8 @@ def save_modbus():
 						threads = [] 
 						fork = True
 						
-						try: pid = os.fork()
+						try: 
+							pid = os.fork()
 						
 						except:
 							write_log( "Ошибка создания дочернего процесса" )
@@ -107,12 +122,17 @@ def save_modbus():
 						#end_time = time.time()					
 						#print (end_time - start_time)	
 					
-					else:
-						time.sleep(0.08)
-					
-					
-					counter += 1
-					
+					else:											
+						GPIO.output(LED, False)	
+						time.sleep(0.08)					
+						GPIO.output(LED, True)
+											
+					counter += 1		
+		
+		 		#finally: 
+				
+
+			
 				
 def copyto_db(data):
 
