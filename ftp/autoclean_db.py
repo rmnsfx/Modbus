@@ -48,7 +48,35 @@ def clean_data():
 			
 			return returnStr
 			
+def service():
+		
+		try:
+			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
+			
+		except:
+			write_log('Unable to connect to the database (service) \n')
+			conn = None
+			conn.close()
+			return False
+		
+		else:		
+			cursor = conn.cursor()
+			conn.autocommit = True
+			cursor.execute("VACUUM FULL iface_data")
+			returnStr = cursor.statusmessage			
+			conn.close()
+			
+			write_log('Vacuum psql (service) \n')
+			
+			
+			if os.path.getsize('/home/roman/daemon_modbus.log') > 100000000:
+				os.remove('/home/roman/daemon_modbus.log')
+				write_log('Remove log file (service) \n')
+			
+			return returnStr			
+			
 			
 if __name__ == "__main__":	
 
 		clean_data()
+		service()

@@ -41,6 +41,7 @@ def save_modbus():
 		buffer_size = 100
 		counter = 0		
 		except_counter = 0
+		reboot_except_counter = 0
 		data_list = []		
 		Point = namedtuple('Point', ['datetime', 'num_reg', 'value'])
 		
@@ -61,23 +62,29 @@ def save_modbus():
 					write_log('Unable connect to modbus \n')		
 					all_data = None
 					
-					if except_counter > 9:
+					if except_counter > 19:
 					
 						except_counter = 0						
-						os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/unbind")						
+						
+						os.system("sudo usbreset /dev/rs485")
+						
+						#os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/unbind")						
+						
 						time.sleep(1)
-						os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/bind")						
+						#os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/bind")						
 						
 						write_log('Power reset 485 (modbus)\n')
 						
-						
+					if reboot_except_counter > 99		
+						os.system("sudo reboot")						
+						write_log('GO REBOOT (modbus)\n')
+					
 					except_counter += 1
+					reboot_except_counter += 1
 										
 					GPIO.cleanup()
 				
 				else:
-					
-					GPIO.output(LED, True)
 					
 					try:																		
 						date = datetime.datetime.now()	
@@ -123,13 +130,13 @@ def save_modbus():
 						#print (end_time - start_time)	
 					
 					else:											
-						GPIO.output(LED, False)	
+						GPIO.output(LED, True)	
 						time.sleep(0.08)					
-						GPIO.output(LED, True)
+						GPIO.output(LED, False)
 											
 					counter += 1		
 		
-		 		#finally: 
+					reboot_except_counter = 0
 				
 
 			
