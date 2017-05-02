@@ -43,6 +43,8 @@ sudo /etc/init.d/postgresql start
 #размер бд
 select pg_database_size('client');
 
+SELECT pg_size_pretty( pg_database_size( 'client' ) );
+
 ------------
 
 sudo dpkg-reconfigure tzdata
@@ -94,6 +96,15 @@ sudo swapon /swapfile
 записать /swapfile none swap sw 0 0 в /etc/fstab
 
 ------------
+
+#Информация  о модулях ядра
+lsmod
+
+#Информация о модуле
+modinfo ch341
+
+------------
+
 
 #smstools (make, make install)
 #запуск smstools

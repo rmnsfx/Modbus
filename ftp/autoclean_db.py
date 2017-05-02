@@ -39,7 +39,7 @@ def clean_data():
 		
 		else:		
 			cursor = conn.cursor()
-			cursor.execute("DELETE FROM iface_data WHERE datetime <= now()::date - INTERVAL '1 MONTH'")
+			cursor.execute("DELETE FROM iface_data WHERE datetime <= now()::date - INTERVAL '1 WEEK'")
 			returnStr = cursor.statusmessage
 			conn.commit()
 			conn.close()
@@ -49,6 +49,8 @@ def clean_data():
 			return returnStr
 			
 def service():
+		
+		
 		
 		try:
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
@@ -63,13 +65,18 @@ def service():
 			cursor = conn.cursor()
 			conn.autocommit = True
 			cursor.execute("VACUUM FULL iface_data")
+			cursor.execute("SELECT pg_size_pretty( pg_database_size( 'client' ) )")
+			dbsize = cursor.fetchone()
+			
 			returnStr = cursor.statusmessage			
 			conn.close()
 			
 			write_log('Vacuum psql (service) \n')
+			write_log('SIZE DB = ' + str("%s" % dbsize) + '\n')
 			
 			
-			if os.path.getsize('/home/roman/daemon_modbus.log') > 100000000:
+			
+			if int(os.path.getsize('/home/roman/daemon_modbus.log')) > 100000000:
 				os.remove('/home/roman/daemon_modbus.log')
 				write_log('Remove log file (service) \n')
 			

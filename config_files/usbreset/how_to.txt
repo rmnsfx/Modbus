@@ -1,0 +1,5 @@
+$ gcc -Wall -static -o usbreset usbreset.c
+$ sudo install -o root -g root -m 0755 usbreset /usr/local/sbin
+$ lsusb | grep Huawei
+Bus 001 Device 002: ID 12d1:1001 Huawei Technologies Co., Ltd. E169/E620/E800 HSDPA Modem
+$ sudo usbreset /dev/bus/usb/001/002
