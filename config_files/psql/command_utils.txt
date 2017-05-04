@@ -4,3 +4,17 @@ CREATE INDEX ON iface_data(datetime)
 
 #Размер БД
 select pg_database_size('client');
+SELECT pg_size_pretty( pg_database_size( 'client' ) );
+
+
+#Подключение к базе
+\connect dbname
+
+
+#Схемы и каталоги таблиц
+SELECT * FROM information_schema.columns;
+
+#Выход
+\q
+
+

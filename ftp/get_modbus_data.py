@@ -40,8 +40,7 @@ def save_modbus():
 		speed = 115200
 		buffer_size = 100
 		counter = 0		
-		except_counter = 0
-		reboot_except_counter = 0
+		except_counter = 0		
 		data_list = []		
 		Point = namedtuple('Point', ['datetime', 'num_reg', 'value'])
 		
@@ -62,26 +61,24 @@ def save_modbus():
 					write_log('Unable connect to modbus \n')		
 					all_data = None
 					
-					if except_counter > 19:
+					if except_counter > 3:
 					
-						except_counter = 0						
-						
 						os.system("sudo usbreset /dev/rs485")
 						
-						#os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/unbind")						
-						
 						time.sleep(1)
-						#os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/bind")						
 						
-						write_log('Power reset 485 (modbus)\n')
+						#os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/unbind")						
+						#os.system("echo '1-1.2' > /sys/bus/usb/drivers/usb/bind")												
 						
-					if reboot_except_counter > 99		
+						write_log('Reset power 485 (modbus)\n')
+						
+					if except_counter > 10:		
+					
 						os.system("sudo reboot")						
 						write_log('GO REBOOT (modbus)\n')
 					
 					except_counter += 1
-					reboot_except_counter += 1
-										
+															
 					GPIO.cleanup()
 				
 				else:
@@ -144,7 +141,9 @@ def save_modbus():
 def copyto_db(data):
 
 		labels = ['datetime', 'num_reg', 'data']
-
+		
+		engine = None
+		
 		try:
 			engine = create_engine('postgresql://roman:1234@localhost:5432/client')					
 			
@@ -153,7 +152,9 @@ def copyto_db(data):
 		
 		except:						
 			write_log('Unable save to db \n')	
-		
+			
+			engine.close()
+			
 			sys.exit( 0 )
 		
 		#else:				

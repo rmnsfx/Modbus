@@ -48,9 +48,7 @@ def clean_data():
 			
 			return returnStr
 			
-def service():
-		
-		
+def service():		
 		
 		try:
 			conn = psycopg2.connect("dbname='client' user='roman' host='localhost' password='1234'")
@@ -64,17 +62,18 @@ def service():
 		else:		
 			cursor = conn.cursor()
 			conn.autocommit = True
-			cursor.execute("VACUUM FULL iface_data")
+			#cursor.execute("VACUUM FULL ANALYZE iface_data")
 			cursor.execute("SELECT pg_size_pretty( pg_database_size( 'client' ) )")
 			dbsize = cursor.fetchone()
 			
 			returnStr = cursor.statusmessage			
 			conn.close()
 			
-			write_log('Vacuum psql (service) \n')
+			#write_log('Vacuum psql (service) \n')
 			write_log('SIZE DB = ' + str("%s" % dbsize) + '\n')
 			
-			
+			os.system("sudo ./pgcompacttable --user roman --password 1234 --dbname client")
+			write_log('Working pgcompacttable (service) \n')
 			
 			if int(os.path.getsize('/home/roman/daemon_modbus.log')) > 100000000:
 				os.remove('/home/roman/daemon_modbus.log')
