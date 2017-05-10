@@ -74,8 +74,8 @@ def save_modbus():
 						
 					if except_counter > 10:		
 					
-						os.system("sudo reboot")						
-						write_log('GO REBOOT (modbus)\n')
+						write_log('GO REBOOT (modbus)\n')	
+						os.system("sudo reboot")		
 					
 					except_counter += 1
 															
@@ -153,7 +153,7 @@ def copyto_db(data):
 		except:						
 			write_log('Unable save to db \n')	
 			
-			engine.close()
+			#engine.close()
 			
 			sys.exit( 0 )
 		

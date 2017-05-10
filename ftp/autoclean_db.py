@@ -62,7 +62,7 @@ def service():
 		else:		
 			cursor = conn.cursor()
 			conn.autocommit = True
-			#cursor.execute("VACUUM FULL ANALYZE iface_data")
+			cursor.execute("VACUUM iface_data")
 			cursor.execute("SELECT pg_size_pretty( pg_database_size( 'client' ) )")
 			dbsize = cursor.fetchone()
 			
@@ -73,7 +73,7 @@ def service():
 			write_log('SIZE DB = ' + str("%s" % dbsize) + '\n')
 			
 			os.system("sudo ./pgcompacttable --user roman --password 1234 --dbname client")
-			write_log('Working pgcompacttable (service) \n')
+			write_log('Pgcompacttable worked (service) \n')
 			
 			if int(os.path.getsize('/home/roman/daemon_modbus.log')) > 100000000:
 				os.remove('/home/roman/daemon_modbus.log')
