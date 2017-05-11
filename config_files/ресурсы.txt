@@ -114,8 +114,45 @@ lsmod
 #Информация о модуле
 modinfo ch341
 
-------------
+-------------------------------------------------------------------------------------------
 
+#Часы rtc модуль ds3231
+
+1. Connect the module to GPIO pins 1..9
+
+2. Power up the Pi
+
+3. sudo raspi-config
+Go to "9 Advanced Options" / "A7 I2C" and enable it including the module load etc
+
+4. Reboot
+
+5. Follow instructions here:
+The Correct way to add an RTC :
+- sudo nano /boot/config.txt
+Add line:
+dtoverlay=i2c-rtc,ds3231
+
+- sudo nano /lib/udev/hwclock-set
+Comment out lines:
+#if [ -e /run/systemd/system ] ; then
+# exit 0
+#fi
+
+- sudo reboot
+
+- Check that the RTC module is on line:
+sudo hwclock -r
+This will display a time that is probably several years off...
+
+6. Set RTC to current system time
+date
+This should display the current system time from the network
+If this time is OK then:
+sudo hwclock -w
+Now the system time is written to the RTC and will be working in case there is no network.
+
+-------------------------------------------------------------------------------------------
 
 #smstools (make, make install)
 #запуск smstools

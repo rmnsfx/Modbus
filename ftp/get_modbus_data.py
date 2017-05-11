@@ -44,9 +44,9 @@ def save_modbus():
 		data_list = []		
 		Point = namedtuple('Point', ['datetime', 'num_reg', 'value'])
 		
-		LED = 4
-		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(LED, GPIO.OUT)
+		# LED = 4
+		# GPIO.setmode(GPIO.BCM)
+		# GPIO.setup(LED, GPIO.OUT)
 		#GPIO.setwarnings(False)
 		
 		
@@ -79,7 +79,7 @@ def save_modbus():
 					
 					except_counter += 1
 															
-					GPIO.cleanup()
+					# GPIO.cleanup()
 				
 				else:
 					
@@ -102,9 +102,9 @@ def save_modbus():
 						write_log('Unable save data to file (modbus)\n')				
 	
 					else:											
-						GPIO.output(LED, True)	
+						# GPIO.output(LED, True)	
 						time.sleep(0.08)					
-						GPIO.output(LED, False)
+						# GPIO.output(LED, False)
 					
 					reboot_except_counter = 0
 				
