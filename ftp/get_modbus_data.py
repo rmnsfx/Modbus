@@ -44,10 +44,10 @@ def save_modbus():
 		data_list = []		
 		Point = namedtuple('Point', ['datetime', 'num_reg', 'value'])
 		
-		# LED = 4
-		# GPIO.setmode(GPIO.BCM)
-		# GPIO.setup(LED, GPIO.OUT)
-		#GPIO.setwarnings(False)
+		LED = 22
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(LED, GPIO.OUT)
+		GPIO.setwarnings(False)
 		
 		
 		while True:											
@@ -72,14 +72,14 @@ def save_modbus():
 						
 						write_log('Reset power 485 (modbus)\n')
 						
-					if except_counter > 10:		
+					if except_counter > 100:		
 					
 						write_log('GO REBOOT (modbus)\n')	
 						os.system("sudo reboot")		
 					
 					except_counter += 1
 															
-					# GPIO.cleanup()
+					GPIO.cleanup()
 				
 				else:
 					
@@ -102,9 +102,13 @@ def save_modbus():
 						write_log('Unable save data to file (modbus)\n')				
 	
 					else:											
-						# GPIO.output(LED, True)	
-						time.sleep(0.08)					
-						# GPIO.output(LED, False)
+						GPIO.output(LED, True)	
+						time.sleep(0.08)											
+						GPIO.output(LED, False)
+						
+						# Зеленый светодиод
+						# os.system("sudo echo 1 >/sys/class/leds/led0/brightness")
+						# os.system("sudo echo 0 >/sys/class/leds/led0/brightness")
 					
 					reboot_except_counter = 0
 				

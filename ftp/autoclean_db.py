@@ -80,9 +80,43 @@ def service():
 				write_log('Remove log file (service) \n')
 			
 			return returnStr			
-			
+
+
+def get_size(start_path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            total_size += os.path.getsize(fp)
+    return total_size
+
+def free_space():
+	
+	s = os.statvfs('/')
+	f = (s.f_bavail * s.f_frsize) / 1048576
+	write_log('Free space = ' + str("%s" % f) + ' MB\n')
+	
+	path = '/home/roman/data/'
+	write_log('Data size = ' + str("%s" % int(get_size(path)/1048576) ) + ' MB\n')
+	
+	
+def remove_old():
+
+	dir_to_search = '/home/roman/data/'
+	for dirpath, dirnames, filenames in os.walk(dir_to_search):
+		for file in filenames:
+			curpath = os.path.join(dirpath, file)
+			file_modified = datetime.datetime.fromtimestamp(os.path.getmtime(curpath))
+			if datetime.datetime.now() - file_modified > datetime.timedelta(days=180):
+			  os.remove(curpath)
+			  write_log(str('Remove old files (clean_data)' + str(curpath) + '\n'))
 			
 if __name__ == "__main__":	
 
-		clean_data()
-		service()
+		# clean_data()
+		# service()
+		
+		
+		free_space()
+		
+		

@@ -13,8 +13,8 @@
 10. sudo apt-get install libpq-dev (postgresql)
 11. sudo apt-get install uwsgi-plugin-python (для uwsgi)
 12. usb-modeswitch usb-modeswitch-data или AT^U2DIAG=0 -> OK (установить режим "модем", putty->serial)
-13. sudo apt-get install wvdial (для 3g модема), wvdialconf (`/etc/wvdial.conf') (https://www.opennet.ru/tips/info/2609.shtml)
-14. sudo apt-get install python-psutil (проверка запущен ли процесс)
+*13. sudo apt-get install wvdial (для 3g модема), wvdialconf (`/etc/wvdial.conf') (https://www.opennet.ru/tips/info/2609.shtml)
+*14. sudo apt-get install python-psutil (проверка запущен ли процесс)
 
 15. sudo apt-get install supervisor
 16. sudo apt-get install ntp ntpdate (ntp-server синхронизация времени)
@@ -23,19 +23,19 @@
 19. sudo pip install sqlalchemy
 20. sudo pip install pyusb
 21. sudo apt-get install gammu python-gammu gammu-smsd
-22. sudo apt-get install watchdog
+*22. sudo apt-get install watchdog
 
-23. sudo apt-get install libdbi-perl
-24. sudo apt-get install libdbd-pg-perl
-25. sudo apt-get install postgresql-contrib
+*23. sudo apt-get install libdbi-perl
+*24. sudo apt-get install libdbd-pg-perl
+*25. sudo apt-get install postgresql-contrib
 
-------------
+-------------------------------------------------------------------------------------------
 
 sudo raspi-config
-Enable SSH, 
+Enable SSH,I2C 
 Serial disable "login shell to be access over serial".
 
-------------
+-------------------------------------------------------------------------------------------
 
 sudo -u postgres psql
 CREATE DATABASE client;
@@ -56,12 +56,12 @@ CREATE EXTENSION pgstattuple;
 
 
 
-------------
+-------------------------------------------------------------------------------------------
 
 sudo dpkg-reconfigure tzdata
 sudo ntpdate -bs ntp.remco.org
 
-------------
+-------------------------------------------------------------------------------------------
 
 #реквизиты usb устройства
 lsusb -v 
@@ -75,7 +75,7 @@ udevadm control --reload-rules
 
 udevadm test /dev/ttyUSB3
 
-------------
+-------------------------------------------------------------------------------------------
 
 #GAMMU
 
@@ -83,7 +83,7 @@ sudo gammu-smsd-inject TEXT +79194622246 -text "Text message 3"
 sudo /etc/init.d/gammu-smsd restart 
 sudo gammu-smsd-monitor 
 
-------------
+-------------------------------------------------------------------------------------------
 
 #Автозагрузка
 
@@ -91,13 +91,13 @@ sudo gammu-smsd-monitor
 /etc/init.d
 update-rc.d
 
-------------
+-------------------------------------------------------------------------------------------
 
 #Отключить OOM Killer
 
 sudo sysctl -w vm.overcommit_memory=2
 
-------------
+-------------------------------------------------------------------------------------------
 
 #Файл подкачки: swap-файл
 
@@ -106,7 +106,7 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 записать /swapfile none swap sw 0 0 в /etc/fstab
 
-------------
+-------------------------------------------------------------------------------------------
 
 #Информация  о модулях ядра
 lsmod
@@ -116,7 +116,7 @@ modinfo ch341
 
 -------------------------------------------------------------------------------------------
 
-#Часы rtc модуль ds3231
+#RTC модуль ds3231 (часы)
 
 1. Connect the module to GPIO pins 1..9
 
@@ -146,6 +146,7 @@ sudo hwclock -r
 This will display a time that is probably several years off...
 
 6. Set RTC to current system time
+
 date
 This should display the current system time from the network
 If this time is OK then:
