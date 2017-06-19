@@ -44,7 +44,7 @@ def send_ftp(path, name):
 		file = open(path + name,'rb')
 		#os.makedirs(datetime.date.today().strftime("%Y-%m-%d_%h-%m"))
 		#result = session.storbinary('STOR /nir/' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '.csv', file)		
-		result = session.storbinary('STOR /nir/' + name, file)		
+		result = session.storbinary('STOR /nir/1/' + name, file)		
 		file.close()									
 		session.quit()		
 		
@@ -86,14 +86,31 @@ def check_ping():
 	return pingstatus
 				
 				
-				
+def memory():
+    """
+    Get node total memory and memory usage
+    """
+    with open('/proc/meminfo', 'r') as mem:
+        ret = {}
+        tmp = 0
+        for i in mem:
+            sline = i.split()
+            if str(sline[0]) == 'MemTotal:':
+                ret['total'] = int(sline[1])
+            elif str(sline[0]) in ('MemFree:', 'Buffers:', 'Cached:'):
+                tmp += int(sline[1])
+        ret['free'] = tmp
+        ret['used'] = int(ret['total']) - int(ret['free'])
+    return ret				
 				
 				
 if __name__ == "__main__":		
 			
 			restart_counter = 0		
 			send_state = False			
-				
+			
+			write_log('RAM state before = ' + str("%s" % memory()) + '\n')			
+			
 			while send_state is False:																
 					
 						modem_ready = False
@@ -150,6 +167,9 @@ if __name__ == "__main__":
 								restart_counter += 1
 								if restart_counter > 5:									
 									write_log('Exit as no ping, error init modem (ftp)\n')
+									
+									write_log('RAM = ' + str("%s" % memory()) + '\n')			
+																		
 									sys.exit( 0 )
 									
 
