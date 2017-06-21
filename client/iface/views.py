@@ -17,6 +17,7 @@ import time
 import os 
 from django.conf import settings
 from django.http import HttpResponse
+import zipfile
 
 
 def main (request):
@@ -189,6 +190,26 @@ def data (request):
 	link = os.listdir(path)
 	link.sort(reverse=True)	
 	
+	if request.method == 'POST' and 'submit_data_form' in request.POST:
+	
+		zf = zipfile.ZipFile("/home/roman/zipdata.zip", "w")
+		
+		for dirs, subdirs, files in os.walk('/home/roman/data/'):
+		
+			#zf.write(dirname)
+			for f in files:				
+				zf.write(os.path.join("/home/roman/data/",f))
+
+		zf.close()
+		
+		f = open('/home/roman/zipdata.zip', 'rb')
+		
+		response = HttpResponse(f, content_type='application/zip')
+		response['Content-Disposition'] = 'attachment; filename="zipdata.zip"'
+		
+		return response
+	
+	
 	return render(request, 'iface/data.html', {'link': link })	
 	#return render(request, 'iface/data.html', {'form_arch': form_arch })		
 	#return HttpResponseRedirect("")
@@ -204,3 +225,5 @@ class DatetimeEncoder(json.JSONEncoder):
 		# Let the base class default method raise the TypeError
 		return json.JSONEncoder.default(self, obj)
 	
+	
+

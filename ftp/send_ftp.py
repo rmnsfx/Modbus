@@ -137,7 +137,7 @@ if __name__ == "__main__":
 								while send_state is False:
 																			
 									timestr = datetime.datetime.now() - datetime.timedelta(hours=1)							
-									outfilename = '{}.csv'.format(timestr.strftime("%Y-%m-%d_%H:00"))
+									outfilename = '{}.csv'.format(timestr.strftime("%Y-%m-%d_%H-00"))
 																												
 									if send_ftp('/home/roman/data/', outfilename) is True:
 										

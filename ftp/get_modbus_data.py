@@ -85,7 +85,7 @@ def save_modbus():
 					
 					try:
 					
-						timestr = datetime.datetime.now().strftime("%Y-%m-%d_%H:00")
+						timestr = datetime.datetime.now().strftime("%Y-%m-%d_%H-00")
 							
 						outfilename = '/home/roman/data/{}.csv'.format(timestr)
 								
