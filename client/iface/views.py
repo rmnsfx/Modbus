@@ -14,6 +14,9 @@ import json
 import itertools
 from datetime import date
 import time
+import os 
+from django.conf import settings
+from django.http import HttpResponse
 
 
 def main (request):
@@ -180,11 +183,16 @@ def conf (request):
 	
 def data (request):
 
-	form_arch = ArchForm(request.POST)
-
-	return render(request, 'iface/data.html', {'form_arch': form_arch })	
-	#return render_to_response('iface/data.html')
+	#form_arch = ArchForm(request.POST)
+	
+	path="/home/roman/data/" 
+	link = os.listdir(path)
+	link.sort(reverse=True)	
+	
+	return render(request, 'iface/data.html', {'link': link })	
+	#return render(request, 'iface/data.html', {'form_arch': form_arch })		
 	#return HttpResponseRedirect("")
+	
 	
 	
 class DatetimeEncoder(json.JSONEncoder):

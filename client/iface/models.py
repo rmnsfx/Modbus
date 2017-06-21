@@ -12,7 +12,7 @@ class MainSettings(models.Model):
 	user_login = models.CharField(max_length=50, null=False, unique=True)
 	user_password = models.CharField(max_length=50, null=False)	  
 	datetime = models.DateTimeField(null=False)
-	sync_time = models.BooleanField(null=False)
+	sync_time = models.BooleanField()
 	sync_server = models.URLField(null=False)
 	period = models.IntegerField(null=False)
 	remote_server = models.URLField(null=False)
