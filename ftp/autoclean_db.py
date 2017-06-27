@@ -99,6 +99,10 @@ def free_space():
 	path = '/home/roman/data/'
 	write_log('Data size = ' + str("%s" % int(get_size(path)/1048576) ) + ' MB\n')
 	
+	# if (f < 1000): 		
+		# remove_old()
+		# write_log('Remove old files (clean_data) \n')
+	
 	
 def remove_old():
 
@@ -109,7 +113,7 @@ def remove_old():
 			file_modified = datetime.datetime.fromtimestamp(os.path.getmtime(curpath))
 			if datetime.datetime.now() - file_modified > datetime.timedelta(days=180):
 			  os.remove(curpath)
-			  write_log(str('Remove old files (clean_data)' + str(curpath) + '\n'))
+			  write_log('Remove old files (clean_data) \n')
 			
 if __name__ == "__main__":	
 

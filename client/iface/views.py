@@ -17,7 +17,12 @@ import time
 import os 
 from django.conf import settings
 from django.http import HttpResponse
+from django.http import StreamingHttpResponse
 import zipfile
+import pandas as pd
+from django.forms.formsets import formset_factory
+
+reg_count = 1
 
 
 def main (request):
@@ -68,11 +73,25 @@ def main (request):
 	# reg10 = list(reg10)
 	# reg11 = list(reg11)	
 	
+	
+	df = pd.read_csv('/home/roman/data/data.csv', sep=';', names = ["datetime", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])						   
+	
+	
+	# df = cursor.fetchall() #Получаем list				
+	# df2 = pd.DataFrame(df) #Конвертируем list в pandas dataframe
+	# df2.columns = ['datetime', 'data', 'num_reg']  #Добавляем заголовки		
+	# df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу													
+	# df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f') 						
+			
+	
+	
 	# return render(request, 'iface/main.html', {'reg1': reg1, 'time': time_data, 'reg2': reg2, 'reg3': reg3, 'reg4': reg4, 'reg5': reg5,'reg6': reg6,'reg7': reg7,'reg8': reg8,'reg9': reg9,'reg10': reg10,'reg11': reg11})
 	
 	return render(request, 'iface/main.html', {'reg1': reg1, 'time': time_data })	
 
 def conf (request):
+
+	global reg_count
 			
 #try:	 
 	
@@ -162,22 +181,48 @@ def conf (request):
 		#form_modbus.user_login_id = main_settings.pk
 		
 		
-		if form_modbus.is_valid():
+		# if form_modbus.is_valid():
 	
-			form_modbus.save()
+			# form_modbus.save()
 			
-			save_mes = True 
+			# save_mes = True 
 			
-		else:
+		# else:
 			
-			print('modbus_form no valid')
-			print(form_modbus.errors)
+			# print('modbus_form no valid')
+			# print(form_modbus.errors)
 	
 	#else: form_modbus = None
 	
-	loop_times = range(0, 1)		
+	#loop_times = range(0, 1)
+
+	formset = formset_factory(ModbusSettingsForm)
 		
-	return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : form_modbus,'save_mes': save_mes, 'loop_times':loop_times})	  
+	#FormSet
+	if request.method == 'POST' and 'add_reg' in request.POST:	
+	
+		#reg_count += 1
+		#formset = formset_factory(ModbusSettingsForm, extra=reg_count)
+		
+		
+  
+		cp = request.POST.copy()
+		cp['form-TOTAL_FORMS'] = int(cp['form-TOTAL_FORMS']) + 1
+		prims = formset(cp,prefix='form')
+			
+	if request.method == 'POST' and 'del_reg' in request.POST:	
+	
+		cp = request.POST.copy()
+		cp['form-TOTAL_FORMS'] = int(cp['form-TOTAL_FORMS']) - 1
+		prims = formset(cp,prefix='form')
+	
+		
+	
+	
+		
+	return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : prims, 'save_mes': save_mes, 'reg_count' : reg_count})		
+		
+	#return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : form_modbus,'save_mes': save_mes, 'loop_times':loop_times})	  
 	#return render_to_response('iface/conf.html', {'main_settings': form_main}, context_instance=RequestContext(request))
 	
 	

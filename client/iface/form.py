@@ -68,14 +68,13 @@ class rs485SettingsForm(forms.ModelForm):
 	
 class ModbusSettingsForm(forms.ModelForm):	
 		
-	adr_item = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	type_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	index_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	type_data = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	size = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	multiplier = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	tag = forms.CharField(widget=forms.TextInput(attrs={'required': 'true'}))	   
-	#archiving = forms.BooleanField(widget=forms.TextInput(attrs={'required': 'false'}))
+	adr_item = forms.IntegerField(widget=forms.TextInput())
+	type_reg = forms.IntegerField(widget=forms.TextInput())
+	index_reg = forms.IntegerField(widget=forms.TextInput())
+	type_data = forms.IntegerField(widget=forms.TextInput())
+	size = forms.IntegerField(widget=forms.TextInput())
+	multiplier = forms.IntegerField(widget=forms.TextInput())
+	tag = forms.CharField(widget=forms.TextInput())	   	
 	archiving = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
 	
 	class Meta:

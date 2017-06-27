@@ -187,9 +187,10 @@
 				
 				
 				 <table border="0">
-					<!-- <caption>Таблица размеров обуви</caption> -->
+					
 					
 					<tr>
+					<th>Номер модуля</th>
 					<th>Адрес модуля</th>
 					<th>Тип регистра</th>
 					<th>Индекс регистра</th>
@@ -201,7 +202,7 @@
 					
 					
 					
-					<tr>
+					<!-- <tr>
 					<td>{{ modbus_settings.adr_item }} </td>
 					<td>{{ modbus_settings.type_reg }} </td>
 					<td>{{ modbus_settings.index_reg}} </td>
@@ -210,8 +211,27 @@
 					<td>{{ modbus_settings.multiplier }} </td>
 					<td>{{ modbus_settings.tag }}  </td>					
 					<td><label class="switch" name="sw_1"> {{ modbus_settings.archiving }} <div class="slider round"></div></label> </td>
+					-->
 					
-					<!-- <td> <label class="switch" name="sw_1"> <input type="checkbox" id="switch_1" onClick="myFunction()"> <div class="slider round"></div></label> </td>-->	
+					
+					{{ modbus_settings.management_form }}
+					
+					{% for form in modbus_settings %}
+					
+					<tr>
+					<td>{{ form.total_form_count }}</td>					
+					<td>{{ form.adr_item }}</td>
+					<td>{{ form.type_reg }}</td>
+					<td>{{ form.index_reg}}</td>
+					<td>{{ form.type_data }}</td>
+					<td>{{ form.size }}</td>
+					<td>{{ form.multiplier }}</td>
+					<td>{{ form.tag }}</td>
+					</tr>
+					
+					{% endfor %}
+					
+					
 
 					<script>    
 						//Сохраняем состояние
@@ -232,28 +252,16 @@
 							}
 							else localStorage.setItem('sw_1', "false");
 						}                    
-					</script>  					
+					</script>  			
+					
 					</tr>
 					
 				</table>
 				
+				alert( {{ reg_count }} )					
 				
 				
-				
-				<!-- {% for i in loop_times %}				
-				<p>
-				
-				{{ modbus_settings.adr_item }} 		
-				{{ modbus_settings.typr_reg }} 		
-				{{ modbus_settings.index_reg}} 		
-				{{ modbus_settings.type_data }} 	
-				{{ modbus_settings.size }} 			
-				{{ modbus_settings.multiplier }} 	
-				{{ modbus_settings.tag }} 			
-				{{ modbus_settings.archiving }} 	
-				</p>
-				
-				{% endfor %} -->
+
 				
 				
 				
@@ -287,6 +295,8 @@
 				</script>					
                         
                 <input type="submit" name="submit_modbus_form" class="flat" value="Сохранить" />
+				<input type="submit" name="add_reg" class="flat" value="Добавить" />
+				<input type="submit" name="del_reg" class="flat" value="Удалить" />
                 
 				</form>      				
             </section>
