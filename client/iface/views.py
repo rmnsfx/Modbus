@@ -21,8 +21,9 @@ from django.http import StreamingHttpResponse
 import zipfile
 import pandas as pd
 from django.forms.formsets import formset_factory
+from django.forms import modelformset_factory
+import re
 
-reg_count = 1
 
 
 def main (request):
@@ -89,9 +90,7 @@ def main (request):
 	
 	return render(request, 'iface/main.html', {'reg1': reg1, 'time': time_data })	
 
-def conf (request):
-
-	global reg_count
+def conf (request):	
 			
 #try:	 
 	
@@ -114,6 +113,8 @@ def conf (request):
 	form_modbus = ModbusSettingsForm(instance=modbus_settings)
 
 	save_mes = False 
+	
+	
 
 	if request.method == 'POST' and 'submit_main_form' in request.POST:
 		
@@ -172,55 +173,87 @@ def conf (request):
 			print(form_rs485.errors)
 			
 	#else: form_rs485 = None		
-		
-	if request.method == 'POST' and 'submit_modbus_form' in request.POST:
-		
-		
-		form_modbus = ModbusSettingsForm(request.POST, instance=modbus_settings)
-		
-		#form_modbus.user_login_id = main_settings.pk
-		
-		
-		# if form_modbus.is_valid():
 	
-			# form_modbus.save()
-			
-			# save_mes = True 
-			
-		# else:
-			
-			# print('modbus_form no valid')
-			# print(form_modbus.errors)
 	
-	#else: form_modbus = None
 	
-	#loop_times = range(0, 1)
-
-	formset = formset_factory(ModbusSettingsForm)
+	
+	
+	#formset = modelformset_factory(ModbusSettings, fields=('id_ModbusSettings', 'adr_item', 'type_reg', 'index_reg', 'type_data', 'size', 'multiplier', 'tag'))
+	#formset = modelformset_factory(ModbusSettings, form=ModbusSettingsForm)		
+	#formset = formset_factory(ModbusSettingsForm)
+	
+	formset = modelformset_factory(ModbusSettings, exclude=('user_login',), can_delete=True)	
+	
+	prims = formset
 		
-	#FormSet
 	if request.method == 'POST' and 'add_reg' in request.POST:	
-	
-		#reg_count += 1
-		#formset = formset_factory(ModbusSettingsForm, extra=reg_count)
 		
+		prims = formset(request.POST)
 		
-  
 		cp = request.POST.copy()
 		cp['form-TOTAL_FORMS'] = int(cp['form-TOTAL_FORMS']) + 1
 		prims = formset(cp,prefix='form')
-			
+		
+		
 	if request.method == 'POST' and 'del_reg' in request.POST:	
+		
+		prims = formset(request.POST)
 	
+		#id = 24
+		
 		cp = request.POST.copy()
 		cp['form-TOTAL_FORMS'] = int(cp['form-TOTAL_FORMS']) - 1
 		prims = formset(cp,prefix='form')
+		
+		# instances = prims.save(commit=False)
+		
+		# for obj in prims.deleted_objects:
+			# obj.delete()
+			
+		#ModbusSettings.objects.get(id_ModbusSettings=id).delete()
+		
+
+	if request.method == 'POST' and 'submit_modbus_form' in request.POST:
+		
+		prims = formset(request.POST)
+		
+		#form_modbus = ModbusSettingsForm(request.POST, instance=modbus_settings)		
+		#form_modbus.user_login_id = main_settings.pk		
+		#if form_modbus.is_valid():
+		
+		if prims.is_valid():
+					
+			prims.save()					
+				
+			save_mes = True
+
+				
+
+		else:
+			
+			print('modbus_form no valid')
+			print(form_modbus.errors)
 	
+	#else: form_modbus = None	
+		
+	#if request.method == 'POST' and  in request.POST:
+		
+		#save_mes = True
 		
 	
+	if request.method == 'POST' and 'edit' in request.POST:
+		
+		ProductFormSet = modelformset_factory(ModbusSettings, exclude=('user_login',), can_delete=True)		
+		data = request.POST or None
+		formset = ProductFormSet(data=data)
+		
+		formset.save()
+			
+	
+	
 	
 		
-	return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : prims, 'save_mes': save_mes, 'reg_count' : reg_count})		
+	return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : prims, 'save_mes': save_mes})		
 		
 	#return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : form_modbus,'save_mes': save_mes, 'loop_times':loop_times})	  
 	#return render_to_response('iface/conf.html', {'main_settings': form_main}, context_instance=RequestContext(request))

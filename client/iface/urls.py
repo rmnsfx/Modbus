@@ -21,7 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^$', views.conf, name='conf'),
+    url(r'^$', views.data, name='data'),
     url(r'^main/$', views.main, name='main'),	
 	url(r'^data/$', views.data, name='data'), 
 	url(r'^conf/$', views.conf, name='conf'),

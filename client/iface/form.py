@@ -67,7 +67,8 @@ class rs485SettingsForm(forms.ModelForm):
 	
 	
 class ModbusSettingsForm(forms.ModelForm):	
-		
+	
+	#id_ModbusSettings = forms.IntegerField(widget = forms.HiddenInput())	
 	adr_item = forms.IntegerField(widget=forms.TextInput())
 	type_reg = forms.IntegerField(widget=forms.TextInput())
 	index_reg = forms.IntegerField(widget=forms.TextInput())
@@ -78,7 +79,8 @@ class ModbusSettingsForm(forms.ModelForm):
 	archiving = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
 	
 	class Meta:
-		model = ModbusSettings		
+		model = ModbusSettings
+		widgets = {'id_ModbusSettings': forms.HiddenInput()}		
 		exclude = ['user_login']
 		
 class ArchForm(forms.Form):	
