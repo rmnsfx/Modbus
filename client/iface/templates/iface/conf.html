@@ -221,21 +221,20 @@
 					
 					<tr>
 					<td>{{ forloop.counter }}</td>										
-					<td>{{ form.id_ModbusSettings }} </td>
-					<td>{{ form.adr_item }} <div class="error_message"> {{ form.adr_item.errors | safe}} </td>
-					<td>{{ form.type_reg }} <div class="error_message"> {{ form.type_reg.errors | safe}} </td>
-					<td>{{ form.index_reg}} <div class="error_message"> {{ form.index_reg.errors | safe}} </td>
-					<td>{{ form.type_data }} <div class="error_message"> {{ form.type_data.errors | safe}} </td>
-					<td>{{ form.size }} <div class="error_message"> {{ form.size.errors | safe}} </td>
-					<td>{{ form.multiplier }} <div class="error_message"> {{ form.multiplier.errors | safe}} </td>
-					<td>{{ form.tag }} <div class="error_message"> {{ form.tag.errors | safe}} </td>
-					<td><input type="submit" name="delete_button_{{ forloop.counter }}" value="Удалить" /></td>
-					
+					<td>{{ form.id_ModbusSettings }}</td>
+					<td>{{ form.adr_item }}</td>
+					<td>{{ form.type_reg }}</td>
+					<td>{{ form.index_reg}}</td>
+					<td>{{ form.type_data }}</td>
+					<td>{{ form.size }}</td>
+					<td>{{ form.multiplier }}</td>
+					<td>{{ form.tag }}</td>
+					<td><input type="submit" id="" name="delete_button_{{ forloop.counter }}" value="Удалить" /></td>					
 					</tr>
 					
 					{% endfor %}
 					
-					
+					{{pk}}
 
 					<script>    
 						//Сохраняем состояние
@@ -296,9 +295,9 @@
                         
                 
 				<input type="submit" name="add_reg" class="flat" value="Добавить" />				
-				<input type="submit" name="submit_modbus_form" class="flat" value="Сохранить" />
-				<input type="submit" name="edit" class="flat" value="Изменить" />
-				<input type="submit" name="del_reg" class="flat" value="Удалить все" />
+				<!-- <input type="submit" name="submit_modbus_form" class="flat" value="Сохранить" /> -->
+				<input type="submit" name="edit" class="flat" value="Сохранить" />
+				<!-- <input type="submit" name="del_reg" class="flat" value="Удалить все" /> -->
 				
                 
 				</form>      				
