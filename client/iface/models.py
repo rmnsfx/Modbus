@@ -48,7 +48,7 @@ class ModbusSettings(models.Model):
 	index_reg = models.IntegerField(null=False)
 	type_data = models.IntegerField(null=False)
 	size = models.IntegerField(null=False)
-	multiplier = models.IntegerField(null=False)
+	multiplier = models.FloatField(null=False)
 	tag = models.CharField(max_length=50, null=False)	
 	archiving = models.BooleanField()
 	

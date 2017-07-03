@@ -74,7 +74,7 @@ class ModbusSettingsForm(forms.ModelForm):
 	index_reg = forms.IntegerField(widget=forms.TextInput())
 	type_data = forms.IntegerField(widget=forms.TextInput())
 	size = forms.IntegerField(widget=forms.TextInput())
-	multiplier = forms.IntegerField(widget=forms.TextInput())
+	multiplier = forms.FloatField(widget=forms.TextInput())
 	tag = forms.CharField(widget=forms.TextInput())	   	
 	archiving = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
 	

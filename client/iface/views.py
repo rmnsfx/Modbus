@@ -23,6 +23,7 @@ import pandas as pd
 from django.forms.formsets import formset_factory
 from django.forms import modelformset_factory
 import re
+from django.forms.models import inlineformset_factory
 
 
 
@@ -90,7 +91,14 @@ def main (request):
     
     return render(request, 'iface/main.html', {'reg1': reg1, 'time': time_data })   
 
-def conf (request): 
+def conf (request):
+
+
+    save_mes = False
+    delete_button_flag = False
+    cnt = 0
+    error_message = False
+ 
             
     try:     
         
@@ -112,9 +120,8 @@ def conf (request):
     form_rs485 = rs485SettingsForm(instance=rs485_settings)      
     #form_modbus = ModbusSettingsForm(instance=modbus_settings)
 
-    save_mes = False 
-    
-    
+         
+        
 
     if request.method == 'POST' and 'submit_main_form' in request.POST:
         
@@ -176,22 +183,11 @@ def conf (request):
     
     
     
-    
-    
-    #formset = modelformset_factory(ModbusSettings, fields=('id_ModbusSettings', 'adr_item', 'type_reg', 'index_reg', 'type_data', 'size', 'multiplier', 'tag'))
-    #formset = modelformset_factory(ModbusSettings, form=ModbusSettingsForm)        
-    #formset = formset_factory(ModbusSettingsForm)
-    
-    
-    
-    
-    formset = modelformset_factory(ModbusSettings, exclude=('user_login',), can_delete=True)        
-    
-    prims = formset
-    
-    cnt = 0
-    
+    formset = modelformset_factory(ModbusSettings, exclude=('user_login',), extra=0)           
+    prims = formset    
         
+    
+    #Добавляем форму в набор (пустое поле)
     if request.method == 'POST' and 'add_reg' in request.POST:  
         
         prims = formset(request.POST)
@@ -200,78 +196,46 @@ def conf (request):
         cp['form-TOTAL_FORMS'] = int(cp['form-TOTAL_FORMS']) + 1
         prims = formset(cp,prefix='form')
         
-        
-    if request.method == 'POST' :    
-        
-		prims = formset(request.POST)
-        
-		for i in range( 0,prims.total_form_count() ):
-			if 'delete_button_' + str(i) in request.POST:   
-				cnt = i - 1
-        
-		form_for_delete = prims[cnt]
-                       
-		id = form_for_delete['id_ModbusSettings'].value()
-		
-		ModbusSettings.objects.get(id_ModbusSettings=id).delete()
-		
-		#instances = prims.save(commit=False)
-		
-		prims.deleted_objects[cnt].delete()
-		
-		#for obj in prims.deleted_objects:
-            # obj.delete() 		
-		
-        
-        
-		
-
-		return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : prims, 'pk' :  form_for_delete['id_ModbusSettings'].value()} ) 
-        
-        
-        
-
-    # if request.method == 'POST' and 'submit_modbus_form' in request.POST:
-        
-        # prims = formset(request.POST)
-        
-        # #form_modbus = ModbusSettingsForm(request.POST, instance=modbus_settings)     
-        # #form_modbus.user_login_id = main_settings.pk     
-        # #if form_modbus.is_valid():
-        
-        # if prims.is_valid():
-                    
-            # prims.save()                  
-                
-            # save_mes = True
-
-                
-
-        # else:
-            
-            # print('modbus_form no valid')
-            # print(form_modbus.errors)
     
-    # #else: form_modbus = None 
-        
-    # #if request.method == 'POST' and  in request.POST:
-        
-        #save_mes = True
-        
-        
-        
-        
     
+    #Определяем нажатие кнопки удаления
+    for key in request.POST:
+        if 'delete_button' in key:
+            delete_button_flag = True    
+    
+    if request.method == 'POST' and delete_button_flag:     
+        
+        prims = formset(request.POST)
+        
+		#Определяем индекc нажатой кнопки
+        for i in range(0,prims.total_form_count()):
+            if 'delete_button_' + str(i) in request.POST:   
+                cnt = i - 1     
+        
+        #Удаляем из бд
+        try:
+            prims[cnt].instance.delete()
+        
+        except:
+            error_message = True
+
+        # # form_for_delete = prims[cnt]        
+        # # id = form_for_delete['id_ModbusSettings'].value()        
+        # # ModbusSettings.objects.get(id_ModbusSettings=id).delete()
+        
+        #Обновляем набор форм (формсет) 
+        prims = modelformset_factory(ModbusSettings, exclude=('user_login',), extra=0)       
+
+    #Сохраняем изменения в бд
     if request.method == 'POST' and 'edit' in request.POST:
         
-        FormSet = modelformset_factory(ModbusSettings, exclude=('user_login',), can_delete=True)        
+        FormSet = modelformset_factory(ModbusSettings, exclude=('user_login',), extra=0)        
         data = request.POST or None
         formset = FormSet(data=data)
         
         if formset.is_valid():
             
-            formset.save()
-            
+            formset.save()            
             save_mes = True             
 
         # else:
@@ -279,7 +243,7 @@ def conf (request):
             # print('modbus_form no valid')
             # print(prims.errors)
                 
-            
+        
     
     
     
