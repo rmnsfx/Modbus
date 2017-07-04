@@ -13,7 +13,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 import itertools
 from datetime import date
-import time
 import os 
 from django.conf import settings
 from django.http import HttpResponse
@@ -24,72 +23,61 @@ from django.forms.formsets import formset_factory
 from django.forms import modelformset_factory
 import re
 from django.forms.models import inlineformset_factory
-
+import csv
 
 
 def main (request):
-
-    #array = Data.objects.filter(num_reg=4).values_list('data', flat=True)      
-    #array = Data.objects.values_list('data', flat=True).order_by('-data')[:100][::-1]
+   
+    time_value = []
+    reg1 = []
+    reg2 = []
+    reg3 = []
+    reg4 = []
+    reg5 = []
+    reg6 = []
+    reg7 = []
+    reg8 = []
     
-    # start_time = time.time()
-    # end_time = time.time()                    
-    # timr = end_time - start_time
+    
+    timestr = datetime.now() - timedelta(hours=1)							
+    outfilename = '{}.csv'.format(timestr.strftime("%Y-%m-%d_%H-00"))
+    
+    with open('/home/roman/data/' + outfilename, 'rb') as f:
+        reader = csv.reader(f, delimiter=';')
+        for row in reader:
+            time_value.append(row[0])
+            reg1.append(row[1])
+            reg2.append(row[2])
+            reg3.append(row[3])
+            reg4.append(row[4])
+            reg5.append(row[5])
+            reg6.append(row[6])
+            reg7.append(row[7])
+            reg8.append(row[8])
         
-    time_1_hour_ago = datetime.now() - timedelta(hours = 1)
+    #Конвертируем string в float
+    reg1 = [float(i) for i in reg1]
+    reg2 = [float(i) for i in reg2]
+    reg3 = [float(i) for i in reg3]
+    reg4 = [float(i) for i in reg4]
+    reg5 = [float(i) for i in reg5]
+    reg6 = [float(i) for i in reg6]
+    reg7 = [float(i) for i in reg7]
+    reg8 = [float(i) for i in reg8]
     
-    reg1 = Data.objects.filter( num_reg=1, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)             
-    #reg1 = Data.objects.filter( num_reg=1, datetime__gt = date.today() ).values_list('data', flat=True)                
-    reg1 = list(reg1)
+    #reg1 = map(int, reg1)
     
-    #time_value = Data.objects.values_list('datetime', flat=True)
+    #raise 
+    #time_value = list(time_value) 
+    #time_data =  json.dumps(time_value, cls=DatetimeEncoder)    
     
-    time_value = Data.objects.filter( num_reg=1, datetime__gte = time_1_hour_ago ).values_list('datetime', flat=True)   
-    #time_value = Data.objects.filter( num_reg=1, datetime__gt = date.today() ).values_list('datetime', flat=True)  
-    time_value = list(time_value)   
-    #time_data =     json.dumps(time_value, cls=DatetimeEncoder)
     
-    time_data =  json.dumps(time_value, cls=DatetimeEncoder)    
+    # df = pd.read_csv('/home/roman/data/' + outfilename, sep=';', names = ["datetime", "reg0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])                               
+    # time_data = df.datetime.tolist()
+    # reg1 = df.reg0.tolist()
 
-    #raise(timr)
     
-    # reg2 = Data.objects.filter( num_reg=2, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)           
-    # reg3 = Data.objects.filter( num_reg=3, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)           
-    # reg4 = Data.objects.filter( num_reg=4, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)           
-    # reg5 = Data.objects.filter( num_reg=5, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)           
-    # reg6 = Data.objects.filter( num_reg=6, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)           
-    # reg7 = Data.objects.filter( num_reg=7, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)           
-    # reg8 = Data.objects.filter( num_reg=8, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)           
-    # reg9 = Data.objects.filter( num_reg=9, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)           
-    # reg10 = Data.objects.filter( num_reg=10, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)         
-    # reg11 = Data.objects.filter( num_reg=11, datetime__gte = time_1_hour_ago ).values_list('data', flat=True)         
-    
-    # reg2 = list(reg2)
-    # reg3 = list(reg3)
-    # reg4 = list(reg4)
-    # reg5 = list(reg5)
-    # reg6 = list(reg6)
-    # reg7 = list(reg7)
-    # reg8 = list(reg8)
-    # reg9 = list(reg9)
-    # reg10 = list(reg10)
-    # reg11 = list(reg11)   
-    
-    
-    df = pd.read_csv('/home/roman/data/data.csv', sep=';', names = ["datetime", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])                           
-    
-    
-    # df = cursor.fetchall() #Получаем list             
-    # df2 = pd.DataFrame(df) #Конвертируем list в pandas dataframe
-    # df2.columns = ['datetime', 'data', 'num_reg']  #Добавляем заголовки       
-    # df3 = pd.pivot_table(df2, index='datetime', columns='num_reg', values='data') #Преобразуем таблицу                                                    
-    # df3.to_csv("/home/roman/data/data.csv", sep=';', header=None, float_format='%.0f')                        
-            
-    
-    
-    # return render(request, 'iface/main.html', {'reg1': reg1, 'time': time_data, 'reg2': reg2, 'reg3': reg3, 'reg4': reg4, 'reg5': reg5,'reg6': reg6,'reg7': reg7,'reg8': reg8,'reg9': reg9,'reg10': reg10,'reg11': reg11})
-    
-    return render(request, 'iface/main.html', {'reg1': reg1, 'time': time_data })   
+    return render(request, 'iface/main.html', {'reg1': reg1, 'reg2': reg2, 'reg3': reg3, 'reg4': reg4, 'reg5': reg5, 'reg6': reg6, 'reg7': reg7, 'reg8': reg8, 'time': time_value })   
 
 def conf (request):
 
@@ -98,6 +86,7 @@ def conf (request):
     delete_button_flag = False
     cnt = 0
     error_message = False
+    temp = None
  
             
     try:     
@@ -185,6 +174,8 @@ def conf (request):
     
     formset = modelformset_factory(ModbusSettings, exclude=('user_login',), extra=0)           
     prims = formset    
+    
+    
         
     
     #Добавляем форму в набор (пустое поле)
@@ -205,23 +196,29 @@ def conf (request):
     
     if request.method == 'POST' and delete_button_flag:     
         
-        prims = formset(request.POST)
+        prims = formset(request.POST)        
+        
         
 		#Определяем индекc нажатой кнопки
-        for i in range(0,prims.total_form_count()):
+        for i in range(0, prims.total_form_count() + 1):        
             if 'delete_button_' + str(i) in request.POST:   
-                cnt = i - 1     
+                cnt = i - 1    
+                       
+        
+        
         
         #Удаляем из бд
         try:
             prims[cnt].instance.delete()
+            
+            # # form_for_delete = prims[cnt]        
+            # # id = form_for_delete['id_ModbusSettings'].value()        
+            # # ModbusSettings.objects.get(id_ModbusSettings=id).delete()
         
         except:
             error_message = True
 
-        # # form_for_delete = prims[cnt]        
-        # # id = form_for_delete['id_ModbusSettings'].value()        
-        # # ModbusSettings.objects.get(id_ModbusSettings=id).delete()
+
         
         #Обновляем набор форм (формсет) 
         prims = modelformset_factory(ModbusSettings, exclude=('user_login',), extra=0)       
@@ -238,21 +235,18 @@ def conf (request):
             formset.save()            
             save_mes = True             
 
-        # else:
+        else:
             
-            # print('modbus_form no valid')
-            # print(prims.errors)
+            print('modbus_form no valid')
+            print(prims.errors)
                 
         
     
     
     
         
-    return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : prims, 'save_mes': save_mes, } )        
+    return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : prims, 'save_mes': save_mes, 'temp' : temp} )        
         
-    #return render(request, 'iface/conf.html', {'main_settings': form_main, 'ethernet_settings': form_ethernet, 'rs485_settings': form_rs485, 'modbus_settings' : form_modbus,'save_mes': save_mes, 'loop_times':loop_times})     
-    #return render_to_response('iface/conf.html', {'main_settings': form_main}, context_instance=RequestContext(request))
-    
     
     
 def data (request):
