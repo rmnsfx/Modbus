@@ -39,43 +39,38 @@ def main (request):
     reg8 = []
     
     
-    timestr = datetime.now() - timedelta(hours=1)							
+    #timestr = datetime.now() - timedelta(hours=1)							
+    timestr = datetime.now()
     outfilename = '{}.csv'.format(timestr.strftime("%Y-%m-%d_%H-00"))
     
-    with open('/home/roman/data/' + outfilename, 'rb') as f:
-        reader = csv.reader(f, delimiter=';')
-        for row in reader:
-            time_value.append(row[0])
-            reg1.append(row[1])
-            reg2.append(row[2])
-            reg3.append(row[3])
-            reg4.append(row[4])
-            reg5.append(row[5])
-            reg6.append(row[6])
-            reg7.append(row[7])
-            reg8.append(row[8])
+    try:
+        with open('/home/roman/data/' + outfilename, 'rb') as f:
+            reader = csv.reader(f, delimiter=';')
+            for row in reader:
+                time_value.append(row[0])
+                # reg1.append(row[1])
+                # reg2.append(row[2])
+                # reg3.append(row[3])
+                # reg4.append(row[4])
+                # reg5.append(row[5])
+                reg6.append(row[6])
+                reg7.append(row[7])
+                reg8.append(row[8])
+    except:
+        error_message = True
+        
         
     #Конвертируем string в float
-    reg1 = [float(i) for i in reg1]
-    reg2 = [float(i) for i in reg2]
-    reg3 = [float(i) for i in reg3]
-    reg4 = [float(i) for i in reg4]
-    reg5 = [float(i) for i in reg5]
+    # reg1 = [float(i) for i in reg1]
+    # reg2 = [float(i) for i in reg2]
+    # reg3 = [float(i) for i in reg3]
+    # reg4 = [float(i) for i in reg4]
+    # reg5 = [float(i) for i in reg5]
     reg6 = [float(i) for i in reg6]
     reg7 = [float(i) for i in reg7]
     reg8 = [float(i) for i in reg8]
     
     #reg1 = map(int, reg1)
-    
-    #raise 
-    #time_value = list(time_value) 
-    #time_data =  json.dumps(time_value, cls=DatetimeEncoder)    
-    
-    
-    # df = pd.read_csv('/home/roman/data/' + outfilename, sep=';', names = ["datetime", "reg0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])                               
-    # time_data = df.datetime.tolist()
-    # reg1 = df.reg0.tolist()
-
     
     return render(request, 'iface/main.html', {'reg1': reg1, 'reg2': reg2, 'reg3': reg3, 'reg4': reg4, 'reg5': reg5, 'reg6': reg6, 'reg7': reg7, 'reg8': reg8, 'time': time_value })   
 
@@ -196,8 +191,7 @@ def conf (request):
     
     if request.method == 'POST' and delete_button_flag:     
         
-        prims = formset(request.POST)        
-        
+        prims = formset(request.POST)
         
 		#Определяем индекc нажатой кнопки
         for i in range(0, prims.total_form_count() + 1):        
@@ -257,6 +251,7 @@ def data (request):
     link = os.listdir(path)
     link.sort(reverse=True) 
     
+    #Скачать все
     if request.method == 'POST' and 'submit_data_form' in request.POST:
     
         zf = zipfile.ZipFile("/home/roman/zipdata.zip", "w")
@@ -276,11 +271,75 @@ def data (request):
         
         return response
     
+    #Скачать месяц
+    if request.method == 'POST' and 'data_month' in request.POST:
+        
+        timestr = datetime.now() - timedelta(1*365/12)
+        outfilename = '{}'.format(timestr.strftime("%Y-%m-%d"))
+        
+        zf = zipfile.ZipFile("/home/roman/zipdata_month.zip", "w")
+        
+        for dirs, subdirs, files in os.walk('/home/roman/data/'):            
+                for f in files:             
+                    if outfilename < f:
+                        zf.write(os.path.join("/home/roman/data/",f))
+                
+        zf.close()
+        
+        f = open('/home/roman/zipdata_month.zip', 'rb')
+        
+        response = HttpResponse(f, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="zipdata_month.zip"'
+        
+        return response
+        
+    #Скачать неделю
+    if request.method == 'POST' and 'data_week' in request.POST:
     
+        timestr = datetime.now() - timedelta(7)
+        outfilename = '{}'.format(timestr.strftime("%Y-%m-%d"))    
+    
+        zf = zipfile.ZipFile("/home/roman/zipdata_week.zip", "w")
+        
+        for dirs, subdirs, files in os.walk('/home/roman/data/'):            
+            for f in files:             
+                if outfilename < f:
+                    zf.write(os.path.join("/home/roman/data/",f))
+        
+        
+        zf.close()
+        
+        f = open('/home/roman/zipdata_week.zip', 'rb')
+        
+        response = HttpResponse(f, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="zipdata_week.zip"'
+        
+        return response
+        
+    #Скачать текущий день
+    if request.method == 'POST' and 'data_day' in request.POST:
+    
+        timestr = datetime.now()
+        outfilename = '{}'.format(timestr.strftime("%Y-%m-%d"))    
+        
+        zf = zipfile.ZipFile("/home/roman/zipdata_day.zip", "w")
+        
+        for dirs, subdirs, files in os.walk('/home/roman/data/'):            
+                for f in files:             
+                    if outfilename in f:
+                        zf.write(os.path.join("/home/roman/data/",f))        
+        zf.close()
+        
+        f = open('/home/roman/zipdata_day.zip', 'rb')
+        
+        response = HttpResponse(f, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="zipdata_day.zip"'
+        
+        return response
+        
+            
     return render(request, 'iface/data.html', {'link': link })  
-    #return render(request, 'iface/data.html', {'form_arch': form_arch })       
-    #return HttpResponseRedirect("")
-    
+
     
     
 class DatetimeEncoder(json.JSONEncoder):

@@ -19,8 +19,8 @@ class MainSettingsForm(forms.ModelForm):
 	user_password_confirm = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Подтверждение пароля', 'required': 'true'}))
 	period = forms.IntegerField(widget=forms.TimeInput(attrs={'placeholder': 'Секунды', 'required': 'true', 'pattern':'[0-9]'}))
 	datetime = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'placeholder': '2006-10-25 14:30:59'}))
-	sync_time = forms.BooleanField(widget=forms.CheckboxInput(), required=False, initial=True)
-	sync_server = forms.URLField(widget=forms.TextInput(attrs={'placeholder': 'http://ntp2.stratum2.ru'}))	  
+	#sync_time = forms.BooleanField(widget=forms.CheckboxInput(), required=False, initial=True)
+	#sync_server = forms.URLField(widget=forms.TextInput(attrs={'placeholder': 'http://ntp2.stratum2.ru'}))	  
 	remote_server = forms.URLField(widget=forms.TextInput(attrs={'placeholder': 'http://ftp.example.com' }))	
 	
 
