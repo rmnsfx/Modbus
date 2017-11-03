@@ -58,9 +58,11 @@ def save_modbus():
 					
 				except:				
 				
-					write_log('Unable connect to modbus \n')		
-					all_data = None
+					all_data = [0]*11
 					
+					#write_log('Unable connect to modbus \n')		
+					#all_data = None					
+                                        
 					#if except_counter > 3:
 					
 						#os.system("sudo usbreset /dev/rs485")
@@ -72,20 +74,22 @@ def save_modbus():
 						
 						#write_log('Reset power 485 (modbus)\n')
 						
-					if except_counter > 100:		
+					if except_counter > 600:		
 					
-						write_log('GO REBOOT (modbus)\n')	
-						os.system("sudo reboot")		
+						#write_log('GO REBOOT (modbus)\n')	
+						#os.system("sudo reboot")	
+						write_log('Unable connect to modbus \n')
+						except_counter = 0						
 					
 					except_counter += 1
 															
-					GPIO.cleanup()
+					#GPIO.cleanup()
 				
-				else:
+				finally:
 					
 					try:
 					
-						timestr = datetime.datetime.now().strftime("%Y-%m-%d_%H-00")
+						timestr = datetime.datetime.now().strftime("%Y-%m-%d %H:00")
 							
 						outfilename = '/home/roman/data/{}.csv'.format(timestr)
 								
@@ -106,7 +110,6 @@ def save_modbus():
 						time.sleep(0.08)											
 						GPIO.output(LED, False)
 						
-						# Зеленый системный светодиод
 						# os.system("sudo echo 1 >/sys/class/leds/led0/brightness")
 						# os.system("sudo echo 0 >/sys/class/leds/led0/brightness")
 					
