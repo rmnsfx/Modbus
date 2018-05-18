@@ -2,19 +2,16 @@
 # coding: utf-8
 from __future__ import generators
 import os
-import daemon 
 import sys
 import signal
 import time
 import logging
 from multiprocessing import Process
-import minimalmodbus
-import psycopg2
 import datetime
 from datetime import timedelta
 import ftplib
 import csv
-import pandas as pd
+
 import numpy as np
 import serial
 import threading
