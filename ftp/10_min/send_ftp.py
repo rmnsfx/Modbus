@@ -97,13 +97,34 @@ def roundTime(dt=None, roundTo=60):
    rounding = (seconds+roundTo/2) // roundTo * roundTo
 
    return dt + datetime.timedelta(0,rounding-seconds,-dt.microsecond)                  
-                
-                
+
+   
+def get_size(start_path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            total_size += os.path.getsize(fp)
+    return total_size     
+
+def free_space():
+    
+    s = os.statvfs('/')
+    f = (s.f_bavail * s.f_frsize) / 1048576
+    write_log('Free space = ' + str("%s" % f) + ' MB\n')
+    
+    path = '/home/roman/'
+    write_log('Data size = ' + str("%s" % int(get_size(path)/1048576) ) + ' MB\n')
+    
+    # if (f < 1000):        
+        # remove_old()
+        # write_log('Remove old files \n')                
                 
 if __name__ == "__main__":      
             
             restart_counter = 0     
-            send_state = False          
+            send_state = False
+                        
                 
             while send_state is False:                                                              
                     
@@ -143,19 +164,20 @@ if __name__ == "__main__":
                                             print('filename: ' + filename)         
                                             print('outfilename: ' + outfilename)
                                             
-                                            if filename in outfilename:  
+                                            if filename in outfilename:                                                  
                                                 modem('stop')                               
                                                 send_state = True
+                                                free_space()                                                
                                                 sys.exit( 0 )                                           
                                                                                                             
                                             if send_ftp('/home/roman/data/', filename) is True:
                                             
                                                 write_log('Data sent to ftp ' + filename + '\n')                                         
-                                                print('sent')
+                                                #print('sent')
                                                 #modem('stop')                               
                                                 #send_state = True   
                                                 #os.system('sudo rm /home/roman/data/' + outfilename) #delete       
-                                                os.rename('/home/roman/data/' + filename, '/home/roman/sent/' + filename) #remove to sent dir
+                                                os.rename('/home/roman/data/' + filename, '/home/roman/sent/' + filename) #remove to 'sent' dir
 
                                                 
                                                 #sys.exit( 0 )           
@@ -163,7 +185,7 @@ if __name__ == "__main__":
                                             else:
                                                 
                                                 write_log('Try to send (ftp)\n')                                            
-                                                print('try sent again')
+                                                #print('try sent again')
                                                 modem('reset')                                      
                                                 #time.sleep(30)
                                                 
@@ -175,12 +197,12 @@ if __name__ == "__main__":
                                                  
                                 
                             else:
-                                write_log('No ping, error init modem (ftp)\n')                                                                                          
+                                write_log('No ping or error init modem (ftp)\n')                                                                                          
                                 modem('reset')
                                 time.sleep(60)  
                                 
                                 restart_counter += 1
-                                if restart_counter > 8:                                 
+                                if restart_counter > 6:                                 
                                     write_log('Exit as no ping, error init modem (ftp)\n')
                                     sys.exit( 0 )
                                     
