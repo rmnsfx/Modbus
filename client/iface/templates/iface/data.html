@@ -41,11 +41,22 @@
 			
 				{% csrf_token %}
 				
+				<!-- 
 				<div class="text_mini">Дата/время начала выборки</div>
 				<p>{{ form_arch.datetime_start }} <div class="error_message"> {{ form_arch.datetime_start.errors | safe}}</p>
 				
 				<div class="text_mini">Дата/время конца выборки</div>
-				<p>{{ form_arch.datetime_end }} <div class="error_message"> {{ form_arch.datetime_end.errors | safe}}</p>
+				<p>{{ form_arch.datetime_end }} <div class="error_message"> {{ form_arch.datetime_end.errors | safe}}</p> 
+				-->
+				
+				{% for file in link %}
+									
+					<p> <a href="/media/{{file}}" /> {{file}} </a> </p>
+					
+				
+				{% endfor %}
+				
+				
 				
 				<script>			
 				function myFunction() 
@@ -54,7 +65,10 @@
 					}				
 				</script>
 				
-				<input type="submit" name="submit_data_form" class="flat" value="Сохранить" />
+				<input type="submit" name="submit_data_form" class="flat" value="Скачать все файлы" />
+				<input type="submit" name="data_month" class="flat" value="Скачать за месяц" />
+				<input type="submit" name="data_week" class="flat" value="Скачать за неделю" />
+				<input type="submit" name="data_day" class="flat" value="Скачать за день" />
 			
 			</form> 
 			

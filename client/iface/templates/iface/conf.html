@@ -37,7 +37,9 @@
 		}
 		</script>
 		
+		
 		{% if save_mes %} <script> show_snackbar() </script> {% endif %}
+		
 
         <div class="tabs">
 		
@@ -95,12 +97,12 @@
                 <div class="text_mini">Настройка даты и времени</div>               
                 <p>{{ main_settings.datetime }} <div class="error_message"> {{ main_settings.datetime.errors | safe}}</p>
 				
-				<p>{{ main_settings.sync_time }}
+				<!-- <p>{{ main_settings.sync_time }}
 				
 				{% if main_settings.sync_time == true %} {% endif %} 
 				
 				<a class="text_mini">Cинхронизация даты и времени </a></p>  
-				<p>{{ main_settings.sync_server }} <div class="error_message"> {{ main_settings.sync_server.errors | safe}}</p> 				
+				<p>{{ main_settings.sync_server }} <div class="error_message"> {{ main_settings.sync_server.errors | safe}}</p> -->				
 				
                 <div class="text_mini">Период архивирования данных</div>
                 <p>{{ main_settings.period }} <div class="error_message"> {{ main_settings.period.errors | safe}} </p>
@@ -187,21 +189,23 @@
 				
 				
 				 <table border="0">
-					<!-- <caption>Таблица размеров обуви</caption> -->
+					
 					
 					<tr>
-					<th>Адрес модуля</th>
-					<th>Тип регистра</th>
-					<th>Индекс регистра</th>
-					<th>Тип данных</th>
-					<th>Размер</th>
-					<th>Множитель</th>
-					<th>Тэг</th>					
+					<th><div class="text_mini">№ </div></th>
+					<th><div class="text_mini"></div></th>
+					<th><div class="text_mini">Адрес модуля</div></th>
+					<th><div class="text_mini">Тип регистра</div></th>
+					<th><div class="text_mini">Индекс регистра</div></th>
+					<th><div class="text_mini">Тип данных</div></th>
+					<th><div class="text_mini">Размер</div></th>
+					<th><div class="text_mini">Множитель</div></th>
+					<th><div class="text_mini">Тэг</div></th>					
 					</tr>
 					
 					
 					
-					<tr>
+					<!-- <tr>
 					<td>{{ modbus_settings.adr_item }} </td>
 					<td>{{ modbus_settings.type_reg }} </td>
 					<td>{{ modbus_settings.index_reg}} </td>
@@ -210,8 +214,29 @@
 					<td>{{ modbus_settings.multiplier }} </td>
 					<td>{{ modbus_settings.tag }}  </td>					
 					<td><label class="switch" name="sw_1"> {{ modbus_settings.archiving }} <div class="slider round"></div></label> </td>
+					-->
 					
-					<!-- <td> <label class="switch" name="sw_1"> <input type="checkbox" id="switch_1" onClick="myFunction()"> <div class="slider round"></div></label> </td>-->	
+					
+					{{ modbus_settings.management_form }}
+					
+					{% for form in modbus_settings %}
+					
+					<tr>
+					<td>{{ forloop.counter }}</td>										
+					<td>{{ form.id_ModbusSettings }}</td>
+					<td>{{ form.adr_item }}</td>
+					<td>{{ form.type_reg }}</td>
+					<td>{{ form.index_reg}}</td>
+					<td>{{ form.type_data }}</td>
+					<td>{{ form.size }}</td>
+					<td>{{ form.multiplier }}</td>
+					<td>{{ form.tag }}</td>
+					<td><input type="submit" id="" name="delete_button_{{ forloop.counter }}" value="Удалить" /></td>					
+					</tr>
+					
+					{% endfor %}
+					
+					
 
 					<script>    
 						//Сохраняем состояние
@@ -232,28 +257,12 @@
 							}
 							else localStorage.setItem('sw_1', "false");
 						}                    
-					</script>  					
+					</script>  			
+					
 					</tr>
 					
 				</table>
 				
-				
-				
-				
-				<!-- {% for i in loop_times %}				
-				<p>
-				
-				{{ modbus_settings.adr_item }} 		
-				{{ modbus_settings.typr_reg }} 		
-				{{ modbus_settings.index_reg}} 		
-				{{ modbus_settings.type_data }} 	
-				{{ modbus_settings.size }} 			
-				{{ modbus_settings.multiplier }} 	
-				{{ modbus_settings.tag }} 			
-				{{ modbus_settings.archiving }} 	
-				</p>
-				
-				{% endfor %} -->
 				
 				
 				
@@ -286,7 +295,12 @@
 						}				
 				</script>					
                         
-                <input type="submit" name="submit_modbus_form" class="flat" value="Сохранить" />
+                
+				<input type="submit" name="add_reg" class="flat" value="Добавить" />				
+				<!-- <input type="submit" name="submit_modbus_form" class="flat" value="Сохранить" /> -->
+				<input type="submit" name="edit" class="flat" value="Сохранить" />
+				<!-- <input type="submit" name="del_reg" class="flat" value="Удалить все" /> -->
+				
                 
 				</form>      				
             </section>

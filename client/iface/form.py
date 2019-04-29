@@ -19,8 +19,8 @@ class MainSettingsForm(forms.ModelForm):
 	user_password_confirm = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Подтверждение пароля', 'required': 'true'}))
 	period = forms.IntegerField(widget=forms.TimeInput(attrs={'placeholder': 'Секунды', 'required': 'true', 'pattern':'[0-9]'}))
 	datetime = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'placeholder': '2006-10-25 14:30:59'}))
-	sync_time = forms.BooleanField(widget=forms.CheckboxInput(), required=False, initial=True)
-	sync_server = forms.URLField(widget=forms.TextInput(attrs={'placeholder': 'http://ntp2.stratum2.ru'}))	  
+	#sync_time = forms.BooleanField(widget=forms.CheckboxInput(), required=False, initial=True)
+	#sync_server = forms.URLField(widget=forms.TextInput(attrs={'placeholder': 'http://ntp2.stratum2.ru'}))	  
 	remote_server = forms.URLField(widget=forms.TextInput(attrs={'placeholder': 'http://ftp.example.com' }))	
 	
 
@@ -67,19 +67,20 @@ class rs485SettingsForm(forms.ModelForm):
 	
 	
 class ModbusSettingsForm(forms.ModelForm):	
-		
-	adr_item = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	type_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	index_reg = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	type_data = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	size = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	multiplier = forms.IntegerField(widget=forms.TextInput(attrs={'required': 'true'}))
-	tag = forms.CharField(widget=forms.TextInput(attrs={'required': 'true'}))	   
-	#archiving = forms.BooleanField(widget=forms.TextInput(attrs={'required': 'false'}))
+	
+	#id_ModbusSettings = forms.IntegerField(widget = forms.HiddenInput())	
+	adr_item = forms.IntegerField(widget=forms.TextInput())
+	type_reg = forms.IntegerField(widget=forms.TextInput())
+	index_reg = forms.IntegerField(widget=forms.TextInput())
+	type_data = forms.IntegerField(widget=forms.TextInput())
+	size = forms.IntegerField(widget=forms.TextInput())
+	multiplier = forms.FloatField(widget=forms.TextInput())
+	tag = forms.CharField(widget=forms.TextInput())	   	
 	archiving = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
 	
 	class Meta:
-		model = ModbusSettings		
+		model = ModbusSettings
+		widgets = {'id_ModbusSettings': forms.HiddenInput()}		
 		exclude = ['user_login']
 		
 class ArchForm(forms.Form):	

@@ -17,11 +17,14 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^$', views.conf, name='conf'),
+    url(r'^$', views.data, name='data'),
     url(r'^main/$', views.main, name='main'),	
 	url(r'^data/$', views.data, name='data'), 
 	url(r'^conf/$', views.conf, name='conf'),
 	url(r'^admin/', include(admin.site.urls)),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
