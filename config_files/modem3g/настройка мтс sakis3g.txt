@@ -1,6 +1,8 @@
 Далее, запустим Sakis3G в интерактивном режиме для установления соединения:
 $ sudo ./sakis3g --interactive
 
+(sudo chmod 777 /usr/sbin/pppd)
+
 Connect with 3G / USB device / Mobile Connect / Interface #0 /
 
 В следуюющем окне под названием «Please select APN» просят выбрать из двух вариантов:

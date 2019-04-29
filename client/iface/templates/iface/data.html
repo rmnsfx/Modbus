@@ -41,6 +41,13 @@
 			
 				{% csrf_token %}
 				
+				<!-- 
+				<div class="text_mini">Дата/время начала выборки</div>
+				<p>{{ form_arch.datetime_start }} <div class="error_message"> {{ form_arch.datetime_start.errors | safe}}</p>
+				
+				<div class="text_mini">Дата/время конца выборки</div>
+				<p>{{ form_arch.datetime_end }} <div class="error_message"> {{ form_arch.datetime_end.errors | safe}}</p> 
+				-->
 				
 				{% for file in link %}
 									

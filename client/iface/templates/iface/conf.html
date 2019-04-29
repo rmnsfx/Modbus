@@ -88,21 +88,27 @@
                                 
                 {% csrf_token %}                                
                 								
-             
+                <div class="text_mini">Параметры учетной записи</div>
+                <p>{{ main_settings.user_login }} <div class="error_message"> {{ main_settings.user_login.errors | safe}}</p>
+				
+                <p>{{ main_settings.user_password }} <div class="error_message"> {{ main_settings.user_password.errors | safe}}</p>                
+                <p>{{ main_settings.user_password_confirm }} <div class="error_message"> {{ main_settings.user_password_confirm.errors | safe}}</p> 
+                                                
+                <div class="text_mini">Настройка даты и времени</div>               
                 <p>{{ main_settings.datetime }} <div class="error_message"> {{ main_settings.datetime.errors | safe}}</p>
-			
+				
+				<!-- <p>{{ main_settings.sync_time }}
+				
+				{% if main_settings.sync_time == true %} {% endif %} 
+				
+				<a class="text_mini">Cинхронизация даты и времени </a></p>  
+				<p>{{ main_settings.sync_server }} <div class="error_message"> {{ main_settings.sync_server.errors | safe}}</p> -->				
 				
                 <div class="text_mini">Период архивирования данных</div>
                 <p>{{ main_settings.period }} <div class="error_message"> {{ main_settings.period.errors | safe}} </p>
                 
                 <div class="text_mini">Удаленное хранение данных</div>
                 <p>{{ main_settings.remote_server }} <div class="error_message"> {{ main_settings.remote_server.errors | safe}}</p>
-				
-				<div class="text_mini">Логин удаленного сервера</div>
-                <p>{{ main_settings.server_login }} <div class="error_message"> {{ main_settings.server_login.errors | safe}}</p>
-				
-				<div class="text_mini">Пароль удаленного сервера</div>
-                <p>{{ main_settings.server_psw }} <div class="error_message"> {{ main_settings.server_psw.errors | safe}}</p>
                 
             
                 <input type="submit" name="submit_main_form" class="flat" value="Сохранить">  								
@@ -117,7 +123,36 @@
                 </form> 
             </section>
 			
-            			
+            <section id="content-tab2">                
+				<form action="/conf/" method="post" onClick="myFunction2()">
+                                
+                {% csrf_token %}                                
+                								
+                <div class="text_mini">IP</div>
+                <p>{{ ethernet_settings.ip }} <div class="error_message"> {{ ethernet_settings.ip.errors | safe}}</p>
+                                                
+                <div class="text_mini">Маска</div>               
+                <p>{{  ethernet_settings.mask }} <div class="error_message"> {{ ethernet_settings.mask.errors | safe}}</p>
+				
+				<div class="text_mini">Шлюз</div>               
+                <p>{{  ethernet_settings.gateway }} <div class="error_message"> {{  ethernet_settings.gateway.errors | safe}}</p>
+				
+				<div class="text_mini">DNS</div>               
+                <p>{{  ethernet_settings.dns }} <div class="error_message"> {{  ethernet_settings.dns.errors | safe}}</p>
+            
+                <input type="submit" name="submit_ethernet_form" class="flat" value="Сохранить" />            
+
+				<script>			
+						function myFunction2() 
+						{
+							localStorage["tab_state"] = "tab2";
+						}				
+				</script>
+
+				
+                </form>                 
+            </section>
+			
             <section id="content-tab3" >
 				<form action="/conf/" method="post" onClick="myFunction3()">
                                 
@@ -151,16 +186,57 @@
                 <form action="/conf/" method="post" onClick="myFunction4()">
 				
                 {% csrf_token %}                
-		
-					<div class="text_mini">Адрес модуля</div>
-					<p>{{ modbus_settings.address }}</p>
-					<div class="text_mini">Номер функции</div>
-					<p>{{ modbus_settings.function }}</p>
-					<div class="text_mini">Номер регистра</div>
-					<p>{{ modbus_settings.number_first_reg }}</p>
-					<div class="text_mini">Количество регистров</div>
-					<p>{{ modbus_settings.count_reg }}</p>
-
+				
+				
+				 <table border="0">
+					
+					
+					<tr>
+					<th><div class="text_mini">№ </div></th>
+					<th><div class="text_mini"></div></th>
+					<th><div class="text_mini">Адрес модуля</div></th>
+					<th><div class="text_mini">Тип регистра</div></th>
+					<th><div class="text_mini">Индекс регистра</div></th>
+					<th><div class="text_mini">Тип данных</div></th>
+					<th><div class="text_mini">Размер</div></th>
+					<th><div class="text_mini">Множитель</div></th>
+					<th><div class="text_mini">Тэг</div></th>					
+					</tr>
+					
+					
+					
+					<!-- <tr>
+					<td>{{ modbus_settings.adr_item }} </td>
+					<td>{{ modbus_settings.type_reg }} </td>
+					<td>{{ modbus_settings.index_reg}} </td>
+					<td>{{ modbus_settings.type_data }}  </td>
+					<td>{{ modbus_settings.size }} </td>
+					<td>{{ modbus_settings.multiplier }} </td>
+					<td>{{ modbus_settings.tag }}  </td>					
+					<td><label class="switch" name="sw_1"> {{ modbus_settings.archiving }} <div class="slider round"></div></label> </td>
+					-->
+					
+					
+					{{ modbus_settings.management_form }}
+					
+					{% for form in modbus_settings %}
+					
+					<tr>
+					<td>{{ forloop.counter }}</td>										
+					<td>{{ form.id_ModbusSettings }}</td>
+					<td>{{ form.adr_item }}</td>
+					<td>{{ form.type_reg }}</td>
+					<td>{{ form.index_reg}}</td>
+					<td>{{ form.type_data }}</td>
+					<td>{{ form.size }}</td>
+					<td>{{ form.multiplier }}</td>
+					<td>{{ form.tag }}</td>
+					<td><input type="submit" id="" name="delete_button_{{ forloop.counter }}" value="Удалить" /></td>					
+					</tr>
+					
+					{% endfor %}
+					
+					
 
 					<script>    
 						//Сохраняем состояние
@@ -187,7 +263,30 @@
 					
 				</table>
 				
-
+				
+				
+				
+                <!-- <input type="checkbox" id="cmn-toggle-1" class="cmn-toggle cmn-toggle-round" onClick="myFunction()">
+                <label for="cmn-toggle-1" name="cb1" value="" ></label>             
+                <script>    
+                    if (localStorage.getItem('cb1') == "true") {
+                      document.getElementById("cmn-toggle-1").setAttribute('checked','checked');
+                    }
+                </script>                
+                
+                <script>
+                    function myFunction() {
+                        var elm = document.getElementById('cmn-toggle-1');                      
+                        
+                        if( elm.checked == true ) 
+                        {
+                            alert('запуск процесса')
+                            localStorage.setItem('cb1', "true");
+                            document.forms['cb1_form'].submit()                     
+                        }
+                        else localStorage.setItem('cb1', "false");
+                    }                    
+                </script> -->
 				
 				<script>			
 						function myFunction4() 
@@ -195,9 +294,14 @@
 							localStorage["tab_state"] = "tab4";
 						}				
 				</script>					
+                        
                 
+				<input type="submit" name="add_reg" class="flat" value="Добавить" />				
+				<!-- <input type="submit" name="submit_modbus_form" class="flat" value="Сохранить" /> -->
 				<input type="submit" name="edit" class="flat" value="Сохранить" />
+				<!-- <input type="submit" name="del_reg" class="flat" value="Удалить все" /> -->
 				
+                
 				</form>      				
             </section>
 			

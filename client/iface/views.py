@@ -48,11 +48,11 @@ def main (request):
             reader = csv.reader(f, delimiter=';')
             for row in reader:
                 time_value.append(row[0])
-                reg1.append(row[1])
-                reg2.append(row[2])
-                reg3.append(row[3])
-                reg4.append(row[4])
-                reg5.append(row[5])
+                # reg1.append(row[1])
+                # reg2.append(row[2])
+                # reg3.append(row[3])
+                # reg4.append(row[4])
+                # reg5.append(row[5])
                 reg6.append(row[6])
                 reg7.append(row[7])
                 reg8.append(row[8])
@@ -61,11 +61,11 @@ def main (request):
         
         
     #Конвертируем string в float
-    reg1 = [float(i) for i in reg1]
-    reg2 = [float(i) for i in reg2]
-    reg3 = [float(i) for i in reg3]
-    reg4 = [float(i) for i in reg4]
-    reg5 = [float(i) for i in reg5]
+    # reg1 = [float(i) for i in reg1]
+    # reg2 = [float(i) for i in reg2]
+    # reg3 = [float(i) for i in reg3]
+    # reg4 = [float(i) for i in reg4]
+    # reg5 = [float(i) for i in reg5]
     reg6 = [float(i) for i in reg6]
     reg7 = [float(i) for i in reg7]
     reg8 = [float(i) for i in reg8]
